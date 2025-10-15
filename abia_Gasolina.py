@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Generator
 
 DISTRIBUCION_PETICIONES = [0.05, 0.65, 0.25, 0.05]
 DISTRIBUCION_DIAS = [0.60, 0.20, 0.15, 0.05]
