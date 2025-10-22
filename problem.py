@@ -8,7 +8,7 @@ from problem_parameters import ProblemParameters
 
 
 class GasProblem(Problem):
-    def __init__(self, initial_state):
+    def __init__(self, initial_state: StateRepresentation):
         super.__init__(initial_state)
     
     def actions(self):
