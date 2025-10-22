@@ -1,6 +1,6 @@
 from __future__ import annotations
 import random
-
+print()
 from abia_Gasolina import *
 from problem_parameters import ProblemParameters
 
