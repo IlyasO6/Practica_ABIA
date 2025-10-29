@@ -1,18 +1,20 @@
 from __future__ import annotations
 import random
 
-from typing import Dict
+from typing import Dict, List, Tuple
 from abia_Gasolina import *
 from problem_parameters import ProblemParameters
 
 
 class StateRepresentation(object):
     
-    def __init__(self, params: ProblemParameters, state: list[tuple[int,]], gasolineras, centros):
+    def __init__(self, params: ProblemParameters, state: List[List[Tuple,], List[int,]], gasolineras, centros):
         self.current_state = state
         self.params = params
 
 
+
+#  state --> lista(lista(), lista())
 #  state -->   list(tuple(gas, camio2, camio1))
 
 def generate_initial_state(params: ProblemParameters):
