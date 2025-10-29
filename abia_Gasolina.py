@@ -104,7 +104,7 @@ class CentrosDistribucion(object):
         self.centros = []
         self.my_random = random.Random(seed + 1)
         for i in range(num_centros):
-            centro = Distribucion(  i, 
+            centro = Distribucion(
                                     self.my_random.randint(0, 99),
                                     self.my_random.randint(0, 99))
             for _ in range(multiplicidad):
