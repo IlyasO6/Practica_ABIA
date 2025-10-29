@@ -8,9 +8,21 @@ from problem_parameters import ProblemParameters
 
 class StateRepresentation(object):
     
-    def __init__(self, params: ProblemParameters, state: List[List[Tuple,], List[int,]], gasolineras, centros):
+    def __init__(self, params: ProblemParameters, state: List[List[int, int, Tuple,], List[List[int,]]], gasolineras, centros):
+        
         self.current_state = state
         self.params = params
+        self.gasolinears = gasolineras
+        self.centros = centros
+
+    def copy(self):
+        pass
+
+    def __repr__(self) -> str:
+        return f"v_c={str(self.v_c)} | {self.params}"
+    
+
+
 
 
 
@@ -25,8 +37,13 @@ def generate_initial_state(params: ProblemParameters):
     
     centros = CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros
     gasolineras = Gasolineras(num_gasolineras=n_gas, seed=seed).gasolineras
-    initial_state = [((gasolinera.cx, gasolinera.cy), None, None) for gasolinera in gasolineras]
+
+    peticiones = [gasolinera.peticiones for gasolinera in gasolineras]
+
+    initial_state = [[0, 0] for _ in centros]
+
     
+
     return initial_state
 
 
@@ -36,6 +53,7 @@ parametres = ProblemParameters(n_distribution_centers= random.randint(1, 10),
                                multiplicitat=random.choices([1, 2, 3, 4], weights=[0.5, 0.3, 0.15, 0.05])[0])
 
 initial_state = generate_initial_state(parametres)
+print(initial_state)
 
-for gas in initial_state:
-    print(gas)
+for lista in initial_state:
+    print(lista)
