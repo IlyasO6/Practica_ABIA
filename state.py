@@ -2,6 +2,7 @@ from __future__ import annotations
 import random
 
 from typing import Dict, List, Tuple
+from operators import *
 from abia_Gasolina import *
 from problem_parameters import ProblemParameters
 
@@ -53,7 +54,117 @@ class StateRepresentation(object):
         cls.dists_gasolineras = matriu_distancies_gasolineres
 
     def generate_actions(self):
-        pass
+        # AddOnlyTrip
+        for gasolinera in range(len(self.current_state[0])):
+            for peticio in range(len(self.current_state[0][gasolinera])):
+                if self.current_state[0][gasolinera][peticio] == None:
+                    for camio in range(len(self.current_state[1])):
+                        x1, y1 = self.gasolineras[gasolinera]
+                        x2, y2 = self.centros[camio]
+                        distancia = abs(x2-x1)+abs(y2-y1)
+                        km = 2*distancia
+                        if self.current_state[1][camio][0]+km < 640 and len(self.current_state[1][camio])<7:
+                            yield AddOnlyTrip(gasolinera, peticio, camio, km)
+        # AddMultipleTrip
+        for gasolinera1 in range(len(self.current_state[0])):
+            for peticio1 in range(len(self.current_state[0][gasolinera1])):
+                if self.current_state[0][gasolinera1][peticio1] == None:
+                    for gasolinera2 in range(len(self.current_state[0])):
+                        for peticio2 in range(len(self.current_state[0][gasolinera2])):
+                            if self.current_state[0][gasolinera2][peticio2] == None:
+                                for camio in range(len(self.current_state[1])):
+                                    x1, y1 = self.gasolineras[gasolinera1]
+                                    x2, y2 = self.centros[camio]
+                                    x3, y3 = self.gasolineras[gasolinera2]
+                                    distancia1 = abs(x2-x1)+abs(y2-y1)
+                                    distancia2 = abs(x3-x1)+abs(y3-y1)
+                                    distancia3 = abs(x3-x2)+abs(y3-y2)
+                                    km = distancia1+distancia2+distancia3
+                                    if self.current_state[1][camio][0]+km < 640 and len(self.current_state[1][camio])<7:
+                                        yield AddMultipleTrip(gasolinera1, gasolinera2, peticio1, peticio2, camio, km)
+        # RemoveTrip
+        for camio in range(len(self.current_state[1])):
+            if len(self.current_state[1][camio]) > 1: # mirem si el camio té algun viatge
+                for tuple in range(1, len(self.current_state[1][camio]+1)):
+                    trip = self.current_state[1][camio][tuple]
+                    if len(tuple) == 1:
+                        gasolinera = trip[0][0]
+                        peticio = trip[0][1]
+                        x1, y1 = self.gasolineras[gasolinera]
+                        x2, y2 = self.centros[camio]
+                        distancia = abs(x2-x1)+abs(y2-y1)
+                        km = 2*distancia
+                        yield RemoveTrip(camio, trip, gasolinera, peticio, km)
+                    else:
+                        gasolinera1 = trip[0][0]
+                        peticio1 = trip[0][1]
+                        gasolinera2 = trip[1][0]
+                        peticio2 = trip[1][1]
+                        x1, y1 = self.gasolineras[gasolinera1]
+                        x2, y2 = self.centros[camio]
+                        x3, y3 = self.gasolineras[gasolinera2]
+                        distancia1 = abs(x2-x1)+abs(y2-y1)
+                        distancia2 = abs(x3-x1)+abs(y3-y1)
+                        distancia3 = abs(x3-x2)+abs(y3-y2)
+                        km = distancia1+distancia2+distancia3
+                        yield RemoveTrip(camio, trip, gasolinera1, peticio1, gasolinera2, peticio2, km)
+
+        # InterchangeTrips
+        for camio1 in range(len(self.current_state[1])):
+            if len(self.current_state[1][camio1]) > 1: # mirem si el camio té algun viatge
+                for tuple in range(1, len(self.current_state[1][camio1]+1)):
+                    trip1 = self.current_state[1][camio1][tuple]
+                    for camio2 in range(len(self.current_state[1])):
+                        if len(self.current_state[1][camio2]) > 1: # mirem si el camio té algun viatge
+                            for tuple in range(1, len(self.current_state[1][camio2]+1)):
+                                trip2 = self.current_state[1][camio2][tuple]
+                                if len(trip1) == 1:
+                                    gasolinera1 = trip1[0][0]
+                                    peticio1 = trip1[0][1]
+                                    x1, y1 = self.gasolineras[gasolinera1]
+                                    x2, y2 = self.centros[camio1]
+                                    distancia = abs(x2-x1)+abs(y2-y1)
+                                    km1 = 2*distancia
+                                else:
+                                    gasolinera1_1 = trip1[0][0]
+                                    peticio1_1 = trip1[0][1]
+                                    gasolinera1_2 = trip1[1][0]
+                                    peticio1_2 = trip1[1][1]
+                                    x1, y1 = self.gasolineras[gasolinera1_1]
+                                    x2, y2 = self.centros[camio1]
+                                    x3, y3 = self.gasolineras[gasolinera1_2]
+                                    distancia1 = abs(x2-x1)+abs(y2-y1)
+                                    distancia2 = abs(x3-x1)+abs(y3-y1)
+                                    distancia3 = abs(x3-x2)+abs(y3-y2)
+                                    km1 = distancia1+distancia2+distancia3
+                                
+                                if len(trip2) == 1:
+                                    gasolinera2 = trip2[0][0]
+                                    peticio2 = trip2[0][1]
+                                    x1, y1 = self.gasolineras[gasolinera2]
+                                    x2, y2 = self.centros[camio2]
+                                    distancia = abs(x2-x1)+abs(y2-y1)
+                                    km2 = 2*distancia
+                                    if gasolinera1:
+                                        yield InterchangeTrips(camio1, trip1, gasolinera1, peticio1, camio2, gasolinera2, peticio2)
+                                    else:
+                                        yield InterchangeTrips(camio1, trip1, gasolinera1_1, gasolinera1_2, peticio1_1, peticio1_2, camio2, gasolinera2, peticio2)
+                                else:
+                                    gasolinera2_1 = trip1[0][0]
+                                    peticio2_1 = trip1[0][1]
+                                    gasolinera2_2 = trip1[1][0]
+                                    peticio2_2 = trip1[1][1]
+                                    x1, y1 = self.gasolineras[gasolinera2_1]
+                                    x2, y2 = self.centros[camio2]
+                                    x3, y3 = self.gasolineras[gasolinera2_2]
+                                    distancia1 = abs(x2-x1)+abs(y2-y1)
+                                    distancia2 = abs(x3-x1)+abs(y3-y1)
+                                    distancia3 = abs(x3-x2)+abs(y3-y2)
+                                    km2 = distancia1+distancia2+distancia3
+                                    if gasolinera1:
+                                        yield InterchangeTrips(camio1, trip1, gasolinera1, peticio1, camio2, gasolinera2_1, gasolinera2_2, peticio2_1, peticio2_2)
+                                    else:
+                                        yield InterchangeTrips(camio1, trip1, gasolinera1_1, gasolinera1_2, peticio1_1, peticio1_2, camio2, gasolinera2_2, peticio2_1, peticio2_1, peticio2_1)             
 
     def apply_action(self):
         pass
