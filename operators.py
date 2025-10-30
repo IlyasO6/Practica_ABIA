@@ -5,15 +5,28 @@ class Operators(object):
     pass
 
 
-class Move_to_1gas(Operators):
-    def __init__(self, distr_coord, gas_coord, deposits):
-        self.distr_coord = distr_coord
-        self.gas_coord = gas_coord
-        self.deposits = deposits
+class add_only_trip(Operators):
+    def __init__(self, peticio, camio):
+        self.gasolinera, self.peticio = peticio
+        self.camio = camio
 
-class Move_to_2gas(Operators):
-    def __init__(self, distr_coord, gas1_coord, gas2_coord):
-        self.distr_coord = distr_coord
-        self.gas1_coord = gas1_coord
-        self.gas2_coord = gas2_coord
+    def __repr__(self) -> str:
+        return f"Camió {self.camio} assoleix petició {self.peticio} de la benzinera {self.gasolinera} i torna al centre de distribució."
 
+class add_multiple_trip(Operators):
+    def __init__(self, peticio1, peticio2, camio):
+        self.gasolinera1, self.peticio1 = peticio1
+        self.gasolinera2, self.peticio2 = peticio2
+        self.camio = camio
+
+    def __repr__(self) -> str:
+        return f"Camió {self.camio} assoleix la petició {self.peticio1} de la benzinera {self.gasolinera1} després assoleix la petició {self.peticio2} de la benzinera {self.gasolinera2} i torna al centre de distribució."
+
+class remove_trip(Operators):
+    def __init__(self, camio, trip):
+        self.camio =
+        self.gasolinera2, self.peticio2 = peticio2
+        self.camio = camio
+
+    def __repr__(self) -> str:
+        return f"Camió {self.camio} assoleix la petició {self.peticio1} de la benzinera {self.gasolinera1} després assoleix la petició {self.peticio2} de la benzinera {self.gasolinera2} i torna al centre de distribució."
