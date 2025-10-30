@@ -8,17 +8,22 @@ from problem_parameters import ProblemParameters
 
 class StateRepresentation(object):
     
+
     def __init__(self, 
                  params: ProblemParameters, 
-                 current_state: List[List[List[int]], List[int, int, Tuple,]], 
+                 current_state: List[List[List[int]], List[int, Tuple,]], 
                  gasolineras: List, 
                  centros, 
                  peticiones):    
         self.current_state = current_state
         self.params = params
-        self.gasolinears = gasolineras
+        self.gasolineras = gasolineras
         self.centros = centros
         self.peticiones = peticiones
+
+        self.dists:list
+        self.dists_gasolineras:list
+
 
     def copy(self):
         pass
@@ -26,16 +31,49 @@ class StateRepresentation(object):
     def __repr__(self) -> str:
         return f"v_c={str(self.v_c)} | {self.params}"
     
+    @classmethod
+    def preprocessament_distancies(cls):
+        matriu_distancies = list()
+        matriu_distancies_gasolineres = list()
+        for gasolinera_coord in self.gasolineras:
+            row = list()
+            row2 = list()
+            for centro_coord in self.centros:
+                distancia = abs(centro_coord[0] - gasolinera_coord[0]) + abs(centro_coord[1] - gasolinera_coord[1])
+                row.append(distancia)
+            
+            for gasolinera_coord2 in self.gasolineras:
+                distancia = abs(gasolinera_coord2[0] - gasolinera_coord[0]) + abs(gasolinera_coord2[1] - gasolinera_coord[1])
+                row2.append(distancia)
+            
+            matriu_distancies.append(row)
+            matriu_distancies_gasolineres.append(row2)
+        
+        cls.dists = matriu_distancies
+        cls.dists_gasolineras = matriu_distancies_gasolineres
+
     def generate_actions(self):
         pass
 
     def apply_action(self):
         pass
 
+    def path_cost(self):
+        gasolineras, camiones = self.current_state
+        camiones = self.current_state[1]
+        gasolineras = self.curren
+        for 
+
+        distancias = 
+
     def heuristic(self):
         
+        camiones = self.current_state[1]
+        costes = [camion[1] for camion in camiones]
 
-        pass
+        beneficio_total = sum(costes)
+
+        
         
 
 #  state --> lista(lista(), lista())
@@ -59,7 +97,7 @@ def generate_initial_state(params: ProblemParameters):
     centros_coords = [(centro.cx, centro.cy) for centro in 
         CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros]
           
-    camions = [[0, 0] for _ in centros]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
+    camions = [[0] for _ in centros]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
     initial_state =  [gas_stations, camions]
 
 
