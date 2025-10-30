@@ -8,7 +8,12 @@ from problem_parameters import ProblemParameters
 
 class StateRepresentation(object):
     
-    def __init__(self, params: ProblemParameters, current_state: List[List[List[int]], List[int, int, Tuple,]], gasolineras, centros, peticiones):    
+    def __init__(self, 
+                 params: ProblemParameters, 
+                 current_state: List[List[List[int]], List[int, int, Tuple,]], 
+                 gasolineras: List, 
+                 centros, 
+                 peticiones):    
         self.current_state = current_state
         self.params = params
         self.gasolinears = gasolineras
@@ -21,10 +26,17 @@ class StateRepresentation(object):
     def __repr__(self) -> str:
         return f"v_c={str(self.v_c)} | {self.params}"
     
+    def generate_actions(self):
+        pass
 
+    def apply_action(self):
+        pass
 
+    def heuristic(self):
+        
 
-
+        pass
+        
 
 #  state --> lista(lista(), lista())
 #  state -->   list(tuple(gas, camio2, camio1))
@@ -35,18 +47,23 @@ def generate_initial_state(params: ProblemParameters):
     multiplicitat = params.multiplicitat
     seed = random.randint(0, 10000)
     
-    centros = CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros
     gasolineras = Gasolineras(num_gasolineras=n_gas, seed=seed).gasolineras
     peticiones = [gasolinera.peticiones for gasolinera in gasolineras]
-    gas_stations = [gasolinera.peticiones for gasolinera in gasolineras] #  Los índices de las gasolineras coinciden con los de la lista de Gasolineras 
-    for i in range(len(gas_stations)):
-        for j in range(len(gas_stations[i])):
-            gas_stations[i][j] = None  #  Inicialmente no hay camión que haya satisfecho las peticiones
-            #  Una vez esten satisfechas se cambiará None por el índice del camión que la haya satisfecho
+    
+    gas_stations = [[None for _ in row] for row in peticiones] 
+    #  Los índices de las gasolineras coinciden con los de la lista de Gasolineras 
+    #  Inicialmente no hay camión que haya satisfecho las peticiones
+    #  Una vez esten satisfechas se cambiará None por el índice del camión que la haya satisfecho
+    
+    gasolineras_coords = [(gasolinera.cx, gasolinera.cy) for gasolinera in gasolineras]
+    centros_coords = [(centro.cx, centro.cy) for centro in 
+        CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros]
+          
     camions = [[0, 0] for _ in centros]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
-    initial_state =  gas_stations.append(camions)
+    initial_state =  [gas_stations, camions]
 
-    return initial_state, gasolineras, centros, peticiones
+
+    return initial_state, gasolineras_coords, centros_coords, peticiones
 
 
 
