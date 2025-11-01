@@ -5,4 +5,4 @@ class ProblemParameters(object):
         self.n_gas = n_gas_stations
         self.multiplicitat = multiplicitat
     def __repr__(self):
-        return f"Parametros: {self.n_centros} centros de distribucion, {self.n_gas} gasolineras."
+        return f"Parametros: {self.n_centers} centros de distribucion, {self.n_gas} gasolineras."

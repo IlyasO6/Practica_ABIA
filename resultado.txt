@@ -1,0 +1,291 @@
+ASIGNACION FINAL:
+Gasolinera 0:
+Peticion 0: Camion: 13. Dias peticion: 1. 
+
+Gasolinera 1:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 8. Dias peticion: 0. 
+
+Gasolinera 2:
+Peticion 0: Camion: 14. Dias peticion: 0. 
+
+Gasolinera 3:
+Peticion 0: Camion: 14. Dias peticion: 0. 
+
+Gasolinera 4:
+Peticion 0: Camion: 13. Dias peticion: 0. 
+
+Gasolinera 5: No tiene peticiones.
+
+Gasolinera 6:
+Peticion 0: Camion: 12. Dias peticion: 1. 
+
+Gasolinera 7:
+Peticion 0: No asignada. 
+
+Gasolinera 8:
+Peticion 0: Camion: 10. Dias peticion: 0. 
+
+Gasolinera 9:
+Peticion 0: Camion: 8. Dias peticion: 0. 
+
+Gasolinera 10:
+Peticion 0: Camion: 13. Dias peticion: 0. 
+
+Gasolinera 11:
+Peticion 0: Camion: 1. Dias peticion: 0. 
+
+Gasolinera 12:
+Peticion 0: No asignada. 
+
+Gasolinera 13:
+Peticion 0: Camion: 17. Dias peticion: 0. 
+
+Gasolinera 14:
+Peticion 0: Camion: 9. Dias peticion: 1. 
+
+Gasolinera 15:
+Peticion 0: No asignada. 
+
+Gasolinera 16:
+Peticion 0: Camion: 6. Dias peticion: 0. 
+
+Gasolinera 17:
+Peticion 0: Camion: 16. Dias peticion: 0. 
+
+Gasolinera 18:
+Peticion 0: Camion: 1. Dias peticion: 1. 
+Peticion 1: Camion: 15. Dias peticion: 0. 
+
+Gasolinera 19:
+Peticion 0: No asignada. 
+
+Gasolinera 20:
+Peticion 0: Camion: 17. Dias peticion: 0. 
+Peticion 1: Camion: 16. Dias peticion: 1. 
+
+Gasolinera 21:
+Peticion 0: Camion: 7. Dias peticion: 0. 
+
+Gasolinera 22:
+Peticion 0: Camion: 1. Dias peticion: 0. 
+
+Gasolinera 23: No tiene peticiones.
+
+Gasolinera 24:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 10. Dias peticion: 0. 
+
+Gasolinera 25:
+Peticion 0: Camion: 2. Dias peticion: 0. 
+Peticion 1: Camion: 1. Dias peticion: 2. 
+
+Gasolinera 26:
+Peticion 0: Camion: 9. Dias peticion: 0. 
+
+Gasolinera 27:
+Peticion 0: Camion: 6. Dias peticion: 0. 
+
+Gasolinera 28:
+Peticion 0: No asignada. 
+
+Gasolinera 29:
+Peticion 0: Camion: 11. Dias peticion: 0. 
+
+Gasolinera 30:
+Peticion 0: Camion: 9. Dias peticion: 0. 
+Peticion 1: Camion: 3. Dias peticion: 1. 
+
+Gasolinera 31:
+Peticion 0: Camion: 14. Dias peticion: 1. 
+
+Gasolinera 32:
+Peticion 0: Camion: 8. Dias peticion: 0. 
+Peticion 1: Camion: 6. Dias peticion: 0. 
+
+Gasolinera 33: No tiene peticiones.
+
+Gasolinera 34:
+Peticion 0: Camion: 1. Dias peticion: 0. 
+Peticion 1: Camion: 5. Dias peticion: 0. 
+
+Gasolinera 35:
+Peticion 0: Camion: 9. Dias peticion: 1. 
+
+Gasolinera 36:
+Peticion 0: Camion: 9. Dias peticion: 1. 
+
+Gasolinera 37:
+Peticion 0: Camion: 14. Dias peticion: 0. 
+
+Gasolinera 38:
+Peticion 0: Camion: 10. Dias peticion: 0. 
+Peticion 1: No asignada. 
+
+Gasolinera 39:
+Peticion 0: Camion: 10. Dias peticion: 0. 
+
+Gasolinera 40:
+Peticion 0: Camion: 13. Dias peticion: 0. 
+
+Gasolinera 41:
+Peticion 0: Camion: 4. Dias peticion: 0. 
+
+Gasolinera 42:
+Peticion 0: Camion: 4. Dias peticion: 1. 
+Peticion 1: Camion: 15. Dias peticion: 2. 
+
+Gasolinera 43:
+Peticion 0: Camion: 15. Dias peticion: 0. 
+
+Gasolinera 44:
+Peticion 0: Camion: 0. Dias peticion: 0. 
+Peticion 1: No asignada. 
+
+Gasolinera 45:
+Peticion 0: Camion: 7. Dias peticion: 1. 
+
+Gasolinera 46:
+Peticion 0: Camion: 5. Dias peticion: 0. 
+
+Gasolinera 47:
+Peticion 0: Camion: 17. Dias peticion: 0. 
+Peticion 1: Camion: 11. Dias peticion: 0. 
+
+Gasolinera 48:
+Peticion 0: Camion: 2. Dias peticion: 0. 
+
+Gasolinera 49:
+Peticion 0: Camion: 7. Dias peticion: 1. 
+
+Gasolinera 50:
+Peticion 0: Camion: 11. Dias peticion: 0. 
+Peticion 1: Camion: 4. Dias peticion: 0. 
+
+Gasolinera 51:
+Peticion 0: Camion: 17. Dias peticion: 0. 
+
+Gasolinera 52:
+Peticion 0: No asignada. 
+
+Gasolinera 53:
+Peticion 0: Camion: 6. Dias peticion: 0. 
+Peticion 1: No asignada. 
+
+Gasolinera 54:
+Peticion 0: Camion: 15. Dias peticion: 0. 
+
+Gasolinera 55:
+Peticion 0: Camion: 0. Dias peticion: 0. 
+Peticion 1: Camion: 11. Dias peticion: 0. 
+
+Gasolinera 56:
+Peticion 0: Camion: 14. Dias peticion: 0. 
+
+Gasolinera 57:
+Peticion 0: Camion: 8. Dias peticion: 0. 
+Peticion 1: No asignada. 
+
+Gasolinera 58: No tiene peticiones.
+
+Gasolinera 59:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 11. Dias peticion: 1. 
+
+Gasolinera 60:
+Peticion 0: Camion: 4. Dias peticion: 2. 
+
+Gasolinera 61:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 3. Dias peticion: 0. 
+
+Gasolinera 62:
+Peticion 0: No asignada. 
+
+Gasolinera 63:
+Peticion 0: Camion: 3. Dias peticion: 0. 
+Peticion 1: Camion: 0. Dias peticion: 0. 
+
+Gasolinera 64:
+Peticion 0: Camion: 3. Dias peticion: 0. 
+
+Gasolinera 65:
+Peticion 0: Camion: 8. Dias peticion: 0. 
+
+Gasolinera 66: No tiene peticiones.
+
+Gasolinera 67:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 0. Dias peticion: 0. 
+
+Gasolinera 68:
+Peticion 0: Camion: 6. Dias peticion: 0. 
+
+Gasolinera 69:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 3. Dias peticion: 0. 
+
+Gasolinera 70:
+Peticion 0: Camion: 12. Dias peticion: 0. 
+
+Gasolinera 71: No tiene peticiones.
+
+Gasolinera 72:
+Peticion 0: Camion: 12. Dias peticion: 2. 
+Peticion 1: Camion: 12. Dias peticion: 2. 
+
+Gasolinera 73:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 2. Dias peticion: 0. 
+
+Gasolinera 74:
+Peticion 0: Camion: 16. Dias peticion: 1. 
+
+Gasolinera 75:
+Peticion 0: Camion: 16. Dias peticion: 0. 
+
+Gasolinera 76:
+Peticion 0: No asignada. 
+Peticion 1: No asignada. 
+
+Gasolinera 77:
+Peticion 0: Camion: 0. Dias peticion: 0. 
+
+Gasolinera 78:
+Peticion 0: Camion: 17. Dias peticion: 0. 
+Peticion 1: Camion: 15. Dias peticion: 0. 
+
+Gasolinera 79:
+Peticion 0: No asignada. 
+
+Gasolinera 80:
+Peticion 0: Camion: 7. Dias peticion: 1. 
+
+Gasolinera 81:
+Peticion 0: No asignada. 
+
+Gasolinera 82:
+Peticion 0: No asignada. 
+Peticion 1: Camion: 5. Dias peticion: 0. 
+
+Gasolinera 83:
+Peticion 0: Camion: 2. Dias peticion: 0. 
+Peticion 1: Camion: 4. Dias peticion: 0. 
+
+Gasolinera 84:
+Peticion 0: No asignada. 
+
+Gasolinera 85:
+Peticion 0: Camion: 12. Dias peticion: 1. 
+
+Gasolinera 86: No tiene peticiones.
+
+Gasolinera 87:
+Peticion 0: Camion: 10. Dias peticion: 1. 
+Peticion 1: No asignada. 
+
+Gasolinera 88:
+Peticion 0: Camion: 7. Dias peticion: 0. 
+Peticion 1: Camion: 16. Dias peticion: 0. 
+
+
