@@ -23,14 +23,16 @@ class MovePeticion(Operators):
 
 class SwapPeticiones(Operators):
     def __init__(self, id_camion_1: int, id_viaje_1: int, pos_1: int,
-                        id_camion_2: int, id_viaje_2: int, pos_2: int, diferencia_distancia: float):
+                        id_camion_2: int, id_viaje_2: int, pos_2: int, 
+                        delta_camion1: float, delta_camion2: float):
         self.id_camion_1 = id_camion_1
         self.id_viaje_1 = id_viaje_1
         self.pos_1 = pos_1
         self.id_camion_2 = id_camion_2
         self.id_viaje_2 = id_viaje_2
-        self.diferencia_distancia = diferencia_distancia
         self.pos_2 = pos_2
+        self.delta_camion1 = delta_camion1
+        self.delta_camion2 = delta_camion2
 
     def __repr__(self) -> str:
         pass
