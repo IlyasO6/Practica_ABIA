@@ -28,10 +28,6 @@ if __name__ == "__main__":
     parametres = ProblemParameters(n_distribution_centers= random.randint(1, 10), 
                                n_gas_stations=random.randint(20, 100),
                                multiplicitat=random.choices([1, 2, 3, 4], weights=[0.5, 0.3, 0.15, 0.05])[0])
-    
-    parametres = ProblemParameters(n_distribution_centers= 6, 
-                               n_gas_stations=100,
-                               multiplicitat=1)
 
     initial_state = generate_initial_state_greedy(parametres)
 
