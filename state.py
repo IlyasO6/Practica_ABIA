@@ -51,15 +51,15 @@ class StateRepresentation(object):
                 camion = gasolinera[j]
                 servicio:str
                 if camion is None:
-                    servicio = "No asignada. "
+                    servicio = f"No asignada. Dias peticion: {peticio}."
                 else:
                     servicio = f"Camion: {camion}. Dias peticion: {peticio}. " 
                 
                 msg.append(f"\nPeticion {j}: {servicio}")
             
             msg.append("\n\n")
-
-        return "ASIGNACION FINAL:\n" + "".join(msg)
+    
+        return "ASIGNACION FINAL:\n" + "".join(msg) + f"\n\nCamiones:\n {self.camiones} \n\nBeneficio total: {self.beneficio}"
         
     @classmethod
     def preprocessament(cls, gasolineras, centros, peticiones):
@@ -297,7 +297,7 @@ class StateRepresentation(object):
                 if self.current_state[i][j] == None:
                     beneficio_hoy, beneficio_sig = self.beneficio_peticiones[i][j]
                     perdida += beneficio_hoy - beneficio_sig
-        
+        self.beneficio -= perdida
         return -perdida
             
 
@@ -308,6 +308,7 @@ class StateRepresentation(object):
                 if self.current_state[i][j] != None:
                     beneficio, _ = self.beneficio_peticiones[i][j]
                     beneficio_total += beneficio
+        self.beneficio += beneficio_total
         return -beneficio_total
 
 #  state --> lista(lista(), lista())
@@ -318,7 +319,7 @@ def generate_initial_state(params: ProblemParameters):
     n_gas = params.n_gas
     multiplicitat = params.multiplicitat
     seed = random.randint(0, 10000)
-    
+    print("Params:", n_gas, n_centers, multiplicitat, seed, sep="\n")
     gasolineras = Gasolineras(num_gasolineras=n_gas, seed=seed).gasolineras
     peticiones = [gasolinera.peticiones for gasolinera in gasolineras]
     

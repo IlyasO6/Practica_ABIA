@@ -34,4 +34,5 @@ if __name__ == "__main__":
     problem = GasProblem(initial_state)
 
     node = hill_climbing(problem)
-    print(node)
+    
+    print(node, file=open("resultado.txt", "w"))
