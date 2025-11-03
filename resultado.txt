@@ -1,128 +1,95 @@
 ASIGNACION FINAL:
 Gasolinera 0:
-Peticion 0: Camion: 0. Dias peticion: 0. 
+Peticion 0: Camion: 0. Dias peticion: 1. 
 
 Gasolinera 1:
-Peticion 0: Camion: 0. Dias peticion: 0. 
+Peticion 0: Camion: 1. Dias peticion: 1. 
 
 Gasolinera 2:
-Peticion 0: No asignada. Dias peticion: 1.
+Peticion 0: Camion: 0. Dias peticion: 0. 
 
 Gasolinera 3:
-Peticion 0: Camion: 0. Dias peticion: 0. 
-Peticion 1: Camion: 0. Dias peticion: 0. 
+Peticion 0: Camion: 5. Dias peticion: 1. 
 
 Gasolinera 4:
-Peticion 0: Camion: 0. Dias peticion: 0. 
+Peticion 0: Camion: 3. Dias peticion: 1. 
+Peticion 1: Camion: 2. Dias peticion: 0. 
 
 Gasolinera 5:
-Peticion 0: Camion: 0. Dias peticion: 0. 
-Peticion 1: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 0. Dias peticion: 2. 
+Peticion 1: Camion: 0. Dias peticion: 0. 
 
 Gasolinera 6:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 4. Dias peticion: 0. 
 
 Gasolinera 7:
-Peticion 0: No asignada. Dias peticion: 1.
+Peticion 0: Camion: 2. Dias peticion: 0. 
 
 Gasolinera 8:
-Peticion 0: No asignada. Dias peticion: 2.
+Peticion 0: Camion: 3. Dias peticion: 1. 
 
 Gasolinera 9:
-Peticion 0: No asignada. Dias peticion: 2.
-Peticion 1: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 0. Dias peticion: 0. 
 
 Gasolinera 10:
-Peticion 0: Camion: 0. Dias peticion: 0. 
-Peticion 1: No asignada. Dias peticion: 3.
+Peticion 0: Camion: 4. Dias peticion: 0. 
+Peticion 1: Camion: 4. Dias peticion: 0. 
 
 Gasolinera 11:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 4. Dias peticion: 0. 
 
 Gasolinera 12:
-Peticion 0: No asignada. Dias peticion: 1.
-Peticion 1: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 1. Dias peticion: 0. 
 
 Gasolinera 13:
-Peticion 0: No asignada. Dias peticion: 1.
+Peticion 0: Camion: 1. Dias peticion: 0. 
 
 Gasolinera 14:
-Peticion 0: Camion: 0. Dias peticion: 2. 
-Peticion 1: No asignada. Dias peticion: 2.
+Peticion 0: Camion: 4. Dias peticion: 0. 
 
 Gasolinera 15:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 1. Dias peticion: 1. 
 
-Gasolinera 16:
-Peticion 0: No asignada. Dias peticion: 2.
+Gasolinera 16: No tiene peticiones.
 
 Gasolinera 17:
-Peticion 0: No asignada. Dias peticion: 1.
+Peticion 0: Camion: 1. Dias peticion: 1. 
 
 Gasolinera 18:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 5. Dias peticion: 2. 
 
 Gasolinera 19:
-Peticion 0: No asignada. Dias peticion: 0.
-Peticion 1: No asignada. Dias peticion: 2.
+Peticion 0: Camion: 0. Dias peticion: 0. 
 
 Gasolinera 20:
-Peticion 0: No asignada. Dias peticion: 1.
+Peticion 0: Camion: 2. Dias peticion: 1. 
+Peticion 1: Camion: 3. Dias peticion: 0. 
 
 Gasolinera 21:
-Peticion 0: No asignada. Dias peticion: 0.
-Peticion 1: No asignada. Dias peticion: 2.
+Peticion 0: Camion: 3. Dias peticion: 1. 
 
 Gasolinera 22:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 4. Dias peticion: 1. 
 
 Gasolinera 23:
-Peticion 0: No asignada. Dias peticion: 1.
-Peticion 1: No asignada. Dias peticion: 2.
+Peticion 0: Camion: 0. Dias peticion: 0. 
 
 Gasolinera 24:
-Peticion 0: No asignada. Dias peticion: 0.
+Peticion 0: Camion: 2. Dias peticion: 1. 
 
-Gasolinera 25: No tiene peticiones.
+Gasolinera 25:
+Peticion 0: Camion: 2. Dias peticion: 0. 
 
 Gasolinera 26:
-Peticion 0: No asignada. Dias peticion: 0.
-Peticion 1: No asignada. Dias peticion: 3.
+Peticion 0: Camion: 4. Dias peticion: 0. 
 
-Gasolinera 27:
-Peticion 0: Camion: 0. Dias peticion: 0. 
-Peticion 1: No asignada. Dias peticion: 3.
+Gasolinera 27: No tiene peticiones.
 
-Gasolinera 28:
-Peticion 0: No asignada. Dias peticion: 1.
-
-Gasolinera 29:
-Peticion 0: No asignada. Dias peticion: 0.
-Peticion 1: No asignada. Dias peticion: 0.
-
-Gasolinera 30:
-Peticion 0: No asignada. Dias peticion: 1.
-
-Gasolinera 31:
-Peticion 0: No asignada. Dias peticion: 0.
-
-Gasolinera 32: No tiene peticiones.
-
-Gasolinera 33:
-Peticion 0: Camion: 0. Dias peticion: 0. 
-
-Gasolinera 34: No tiene peticiones.
-
-Gasolinera 35:
-Peticion 0: No asignada. Dias peticion: 0.
-
-Gasolinera 36:
-Peticion 0: No asignada. Dias peticion: 2.
-Peticion 1: No asignada. Dias peticion: 0.
+Gasolinera 28: No tiene peticiones.
 
 
 
 Camiones:
- [[670, [(0, 0), (10, 0)], [(5, 0), (14, 0)], [(3, 0), (33, 0)], [(3, 1), (4, 0)], [(1, 0), (27, 0)]]] 
+ [[636, [(5, 1), (19, 0)], [(2, 0), (5, 0)], [(9, 0), (0, 0)], [(23, 0)]], [638, [(17, 0)], [(15, 0), (13, 0)], [(1, 0), (12, 0)]], [638, [(7, 0), (24, 0)], [(4, 1)], [(25, 0)], [(20, 0)]], [638, [(20, 1)], [(21, 0)], [(8, 0)], [(4, 0)]], [636, [(11, 0)], [(6, 0), (22, 0)], [(10, 0), (26, 0)], [(10, 1)], [(14, 0)]], [314, [(18, 0), (3, 0)]]] 
 
-Beneficio total: 3490200.0
+Beneficio total: 23040.0
