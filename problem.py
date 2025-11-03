@@ -18,8 +18,10 @@ class GasProblem(Problem):
         return state.apply_action(action)
 
     def value(self, state: StateRepresentation) -> float:
-        return -state.heuristic()
-
+        return state.heuristic() - state.path_cost()
+        #  buscamos minimizar entonces el heurístico es (-) y el path cost (+)
+        #  ambos se retornan como (-) desde state
+        #  porque queremos tener poca pérdida potencial ¿no? o nos da igual
     def goal_test(self):
         return False
 
