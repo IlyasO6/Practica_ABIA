@@ -185,13 +185,10 @@ class StateRepresentation(object):
                             for pos_2 in range(len(viaje_2)):
                                 if i == j and idx == idx2 and pos_1 == pos_2:
                                     continue
-
                                 nuevo_v1 = [tupla for tupla in viaje_1]
                                 nuevo_v2 = [tupla for tupla in viaje_2] 
-                                
                                 nuevo_v1[pos_1] = viaje_2[pos_2]
                                 nuevo_v2[pos_2] = viaje_1[pos_1]
-
                                 new1 = self._distancia_viaje(i, nuevo_v1)
                                 new2 = self._distancia_viaje(j, nuevo_v2)
                                 delta1 = new1 - old_v1
@@ -484,7 +481,7 @@ def generate_initial_state_greedy(params: ProblemParameters):
                     beneficio_total += beneficio2
             else:
                 break
-            
+    print(beneficio_total)
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,
