@@ -27,25 +27,23 @@ class StateRepresentation(object):
         self.beneficio = beneficio
         self.distancia = distancia
         self.perdida = 0
-        self.dists:list
-        self.dists_gasolineras:list
 
-
-    def copy(self):
-
-        asignaciones_copia = [list(gasolinera) for gasolinera in self.current_state]
-        camiones_copia = []
+    def _copy_camiones(self):
+        camiones_copia = list()
         for camion in self.camiones:
             camion_copia = [camion[0]]
             for viaje in camion[1:]:
                 camion_copia.append(list(viaje))
             camiones_copia.append(camion_copia)
+        return camiones_copia
+    
+    def copy(self):
 
         return StateRepresentation(
-            asignaciones=asignaciones_copia,
-            camiones=camiones_copia,
-            beneficio=self.beneficio,
-            distancia=self.distancia,
+            asignaciones= [list(gasolinera) for gasolinera in self.current_state],
+            camiones= self._copy_camiones(),
+            beneficio= self.beneficio,
+            distancia= self.distancia,
         )
 
     def __repr__(self) -> str:
@@ -134,97 +132,88 @@ class StateRepresentation(object):
         return self._dist_c_g(camion_id, g1) + self._dist_g_g(g1, g2) + self._dist_c_g(camion_id, g2)
     
     def generate_actions(self):
+        camiones = self._copy_camiones()
         # Remove, Move, Swap 
-        camiones = [camion for camion in self.camiones]
-        for i, camion1 in enumerate(camiones):
-            if len(camion1) <= 1:
+        for idx_camion_1, camion_1 in enumerate(camiones):
+            #  si el camion no tiene viajes, skip:
+            if len(camion_1) <= 1:
                 continue
-            for idx in range(1, len(camion1)):
-                viaje_1 = camion1[idx]
-                if not viaje_1:
-                    continue
-                old_v1 = self._distancia_viaje(i, viaje_1)
-                for pos_1 in range(len(viaje_1)):
-                    gas_actual, pet_idx = viaje_1[pos_1]
-                    
-                    # RemovePeticion
-                    v1_after = viaje_1[:pos_1] + viaje_1[pos_1 + 1:]
-                    new_v1 = self._distancia_viaje(i, v1_after)
-                    delta_remove = old_v1 - new_v1
+            for idx_viaje_camion_1 in range(1, len(camion_1)):
+                viaje_1 = camion_1[idx_viaje_camion_1] #  no hace falta comprobar que exista, ya que no pueden haber listas vacias
+                dist_viaje_1_anterior = self._distancia_viaje(idx_camion_1, viaje_1)
+                
+                for idx_peticion_camion_1 in range(len(viaje_1)):
+                    id_gas_camion_1, id_peticion_camion_1 = viaje_1[idx_peticion_camion_1]
+                    #  eliminamos la peticion actual del viaje, y evaluamos la nueva distancia:
+                    viaje_camion_1_post = viaje_1[:idx_peticion_camion_1] + viaje_1[idx_peticion_camion_1 + 1:]
+                    dist_viaje_1_post = self._distancia_viaje(idx_camion_1, viaje_camion_1_post)
+                    #  diferencia (delta) de distancia de viaje tras eliminar la petición:
+                    dist_reducida = dist_viaje_1_post - dist_viaje_1_anterior
                     yield RemovePeticion(
-                        id_camion=i, id_viaje=idx, id_peticion=pos_1,
-                        distancia_reducida=delta_remove
+                        id_camion=idx_camion_1, id_viaje=idx_viaje_camion_1, id_peticion=idx_peticion_camion_1,
+                        distancia_reducida=dist_reducida
                         )
-                    
-                    for j, camion2 in enumerate(camiones):
-                        for idx2 in range(1, len(camion2)):
-                            viaje_2 = camion2[idx2]
-
-                            # MovePeticion
-                            if (i != j or idx != idx2) and viaje_2 and len(viaje_2) < self.MAX_PETICIONES_VIAJE:
-                                old_o = old_v1
-                                new_o = new_v1 
-                                delta_o = old_o - new_o 
-
-                                old_d = self._distancia_viaje(j, viaje_2)
-                                new_d = self._distancia_viaje(j, viaje_2 + [(gas_actual, pet_idx)])
-                                delta_d = new_d - old_d 
-
-                                if camiones[i][0] - delta_o <= self.MAX_KM and camiones[j][0] + delta_d <= self.MAX_KM:
+                    for idx_camion_2, camion_2 in enumerate(camiones):
+                        for idx2 in range(1, len(camion_2)):
+                            viaje_2 = camion_2[idx2]
+                            dist_viaje_2_anterior = self._distancia_viaje(idx_camion_2, viaje_2)
+                            #  comprobamos restricciones:
+                            if (idx_camion_1 != idx_camion_2 or idx_viaje_camion_1 != idx2) and len(viaje_2) < self.MAX_PETICIONES_VIAJE:
+                                #  calculamos distancias:
+                                delta_origen = dist_reducida
+                                dist_viaje_2_post = self._distancia_viaje(idx_camion_2, viaje_2 + [(id_gas_camion_1, id_peticion_camion_1)])
+                                delta_desti = dist_viaje_2_post - dist_viaje_2_anterior 
+                                #  comprobamos que se cumplan las restricciones 
+                                if camiones[idx_camion_2][0] + delta_desti <= self.MAX_KM:
                                     yield MovePeticion(
-                                        camion_origen=i, viaje_origen=idx, pos_origen=pos_1,
-                                        camion_destino=j, viaje_destino=idx2,
-                                        distancia_reducida=delta_o, distancia_adicional=delta_d
+                                        camion_origen=idx_camion_1, viaje_origen=idx_viaje_camion_1, pos_origen=idx_peticion_camion_1,
+                                        camion_destino=idx_camion_2, viaje_destino=idx2,
+                                        distancia_reducida=delta_origen, distancia_adicional=delta_desti
                                     )
-
-                            # SwapPeticiones
-                            if not viaje_2:
-                                continue
-
-                            old_v2 = self._distancia_viaje(j, viaje_2)
-                            for pos_2 in range(len(viaje_2)):
-                                if i == j and idx == idx2 and pos_1 == pos_2:
+                            for idx_peticion_camion_2 in range(len(viaje_2)):
+                                if idx_camion_1 == idx_camion_2 and idx_viaje_camion_1 == idx2 and idx_peticion_camion_1 == idx_peticion_camion_2:
                                     continue
+                                #  copiamos las listas de los viajes en listas temporales:
                                 nuevo_v1 = [tupla for tupla in viaje_1]
                                 nuevo_v2 = [tupla for tupla in viaje_2] 
-                                nuevo_v1[pos_1] = viaje_2[pos_2]
-                                nuevo_v2[pos_2] = viaje_1[pos_1]
-                                new1 = self._distancia_viaje(i, nuevo_v1)
-                                new2 = self._distancia_viaje(j, nuevo_v2)
-                                delta1 = new1 - old_v1
-                                delta2 = new2 - old_v2
-
-                                if camiones[i][0] + delta1 <= self.MAX_KM and camiones[j][0] + delta2 <= self.MAX_KM:
+                                #  intercambiamos las respectivas peticiones:
+                                nuevo_v1[idx_peticion_camion_1] = viaje_2[idx_peticion_camion_2]
+                                nuevo_v2[idx_peticion_camion_2] = viaje_1[idx_peticion_camion_1]
+                                #  recalculamos distancias:
+                                dist_nuevo_v1 = self._distancia_viaje(idx_camion_1, nuevo_v1)
+                                dist_nuevo_v2 = self._distancia_viaje(idx_camion_2, nuevo_v2)
+                                delta_viaje_camion_1 = dist_nuevo_v1 - dist_viaje_1_anterior
+                                delta_viaje_camion_2 = dist_nuevo_v2 - dist_viaje_2_anterior
+                                #  comprobamos que se cumplan las restricciones 
+                                if camiones[idx_camion_1][0] + delta_viaje_camion_1 <= self.MAX_KM and camiones[idx_camion_2][0] + delta_viaje_camion_2 <= self.MAX_KM:
                                     yield SwapPeticiones(
-                                        id_camion_1=i, id_viaje_1=idx, pos_1=pos_1,
-                                        id_camion_2=j, id_viaje_2=idx2, pos_2=pos_2,
-                                        delta_camion1=delta1, delta_camion2=delta2
+                                        id_camion_1=idx_camion_1, id_viaje_1=idx_viaje_camion_1, pos_1=idx_peticion_camion_1,
+                                        id_camion_2=idx_camion_2, id_viaje_2=idx2, pos_2=idx_peticion_camion_2,
+                                        delta_camion1=delta_viaje_camion_1, delta_camion2=delta_viaje_camion_2
                                     )
-
-        # InsertViaje y FillViaje
-        for gasolinera in range(len(self.current_state)):
-            for peticio in range(len(self.current_state[gasolinera])):
-                if self.current_state[gasolinera][peticio] is None:
-                    for i, camion in enumerate(self.camiones):
-                        # InsertViaje: crear viaje nuevo con una única petición
+        #  InsertViaje y FillViaje
+        for idx_gasolinera in range(len(self.current_state)):
+            for idx_peticio in range(len(self.current_state[idx_gasolinera])):
+                if self.current_state[idx_gasolinera][idx_peticio] is None: #  la peticion no está asignada
+                    for idx_camion, camion in enumerate(self.camiones):
                         if len(camion) - 1 < self.MAX_VIAJES:
-                            distancia_add = 2 * self._dist_c_g(i, gasolinera)
-                            if camion[0] + distancia_add <= self.MAX_KM:
+                            distancia_adicional = 2 * self._dist_c_g(idx_camion, idx_gasolinera)
+                            if camion[0] + distancia_adicional <= self.MAX_KM:
                                 yield InsertViaje(
-                                    id_camion=i, id_gasolinera=gasolinera, id_peticion=peticio,
-                                    distancia_adicional=distancia_add
+                                    id_camion=idx_camion, id_gasolinera=idx_gasolinera, id_peticion=idx_peticio,
+                                    distancia_adicional=distancia_adicional
                                 )
-                        # FillViaje: añadir como segunda petición a un viaje existente de 1 petición
-                        for idx in range(1, len(camion)):
-                            viaje = camion[idx]
+                        # FillViaje: añadir segunda petición a un viaje existente de 1 petición
+                        for idx_viaje in range(1, len(camion)):
+                            viaje = camion[idx_viaje]
                             if viaje and len(viaje) < self.MAX_PETICIONES_VIAJE:
-                                old_v = self._distancia_viaje(i, viaje)
-                                new_v = self._distancia_viaje(i, viaje + [(gasolinera, peticio)])
-                                add = new_v - old_v
+                                distancia_ant = self._distancia_viaje(idx_camion, viaje)
+                                distancia_post = self._distancia_viaje(idx_camion, viaje + [(idx_gasolinera, idx_peticio)])
+                                add = distancia_post - distancia_ant
                                 if camion[0] + add <= self.MAX_KM:
                                     yield FillViaje(
-                                        id_camion=i, id_viaje=idx, id_gasolinera=gasolinera,
-                                        id_peticion=peticio, distancia_adicional=add
+                                        id_camion=idx_camion, id_viaje=idx_viaje, id_gasolinera=idx_gasolinera,
+                                        id_peticion=idx_peticio, distancia_adicional=add
                                     )
                             
     def apply_action(self, action: Operators) -> StateRepresentation:
@@ -252,7 +241,6 @@ class StateRepresentation(object):
             new_state.distancia -= distancia_reducida
         
         elif isinstance(action, MovePeticion):
-            
             #  parametros del operador:
             camion_origen = action.camion_origen
             viaje_origen = action.viaje_origen
@@ -261,17 +249,14 @@ class StateRepresentation(object):
             viaje_destino = action.viaje_destino
             distancia_reducida = action.distancia_reducida
             distancia_adicional = action.distancia_adicional
-            
             #  Actualizamos asignación
-            #print("\nNUEVA ITER")
-            #print(new_state.camiones, camion_origen, viaje_origen, pos_origen, sep="\n")
             gasolinera, peticion = new_state.camiones[camion_origen][viaje_origen][pos_origen]
             new_state.current_state[gasolinera][peticion] = camion_destino
-            #  Movemos la petición del viaje origen al viaje destino y modificamos distancias:
+            #  Movemos la petición del viaje origen al viaje destino:
             del new_state.camiones[camion_origen][viaje_origen][pos_origen]
-
-            new_state.camiones[camion_origen][0] -= distancia_reducida
             new_state.camiones[camion_destino][viaje_destino].append((gasolinera, peticion))
+            #  actualizamos distancias
+            new_state.camiones[camion_origen][0] -= distancia_reducida
             new_state.camiones[camion_destino][0] += distancia_adicional
             new_state.distancia += distancia_adicional - distancia_reducida
             

@@ -7,9 +7,11 @@ from state import StateRepresentation, generate_initial_state, generate_initial_
 from problem_parameters import ProblemParameters
 from operators import Operators
 
+
 class GasProblem(Problem):
     def __init__(self, initial_state: StateRepresentation):
         super().__init__(initial_state)
+
     
     def actions(self, state: StateRepresentation) -> Generator[Operators, None, None]:
         return state.generate_actions()
