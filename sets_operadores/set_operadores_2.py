@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+
 
 #  Operadores 2
 class Operators(object):

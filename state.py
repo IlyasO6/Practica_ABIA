@@ -136,7 +136,7 @@ class StateRepresentation(object):
         # Remove, Move, Swap 
         for idx_camion_1, camion_1 in enumerate(camiones):
             #  si el camion no tiene viajes, skip:
-            if len(camion_1) <= 1:
+            if len(camion_1) < 2:
                 continue
             for idx_viaje_camion_1 in range(1, len(camion_1)):
                 viaje_1 = camion_1[idx_viaje_camion_1] #  no hace falta comprobar que exista, ya que no pueden haber listas vacias
