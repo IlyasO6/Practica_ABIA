@@ -46,26 +46,28 @@ class RemoveTrip(Operators):
 #  Generate Action
     # AddOnlyTrip
 def generate_actions_1(estado):
-    for gasolinera in range(len(estado.current_state)):
-        for peticio in range(len(estado.current_state[gasolinera])):
-            if estado.current_state[gasolinera][peticio] is None:
-                for camio in range(len(estado.camiones)):
+    camiones = estado._copy_camiones()
+    gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
+    for gasolinera in range(len(gasolineras)):
+        for peticio in range(len(gasolineras[gasolinera])):
+            if gasolineras[gasolinera][peticio] is None:
+                for camio in range(len(camiones)):
                     km = estado._distancia_viaje(camio, [(gasolinera, peticio)])
-                    if estado.camiones[camio][0]+km < 640 and len(estado.camiones[camio]) < 6:
+                    if camiones[camio][0]+km < 640 and len(camiones[camio]) < 6:
                         yield AddOnlyTrip(km, gasolinera, peticio, camio)
     # AddMultipleTrip
-                for gasolinera2 in range(len(estado.current_state)):
-                    for peticio2 in range(len(estado.current_state[gasolinera2])):
-                        if estado.current_state[gasolinera2][peticio2] is None and (gasolinera != gasolinera2 or peticio != peticio2):
-                            for camio in range(len(estado.camiones)):
+                for gasolinera2 in range(len(gasolineras)):
+                    for peticio2 in range(len(gasolineras[gasolinera2])):
+                        if gasolineras[gasolinera2][peticio2] is None and (gasolinera != gasolinera2 or peticio != peticio2):
+                            for camio in range(len(camiones)):
                                 km = estado._distancia_viaje(camio, [(gasolinera, peticio), (gasolinera2, peticio2)])
-                                if estado.camiones[camio][0]+km < 640 and len(estado.camiones[camio]) < 6:
+                                if camiones[camio][0]+km < 640 and len(camiones[camio]) < 6:
                                     yield AddMultipleTrip(km, gasolinera, gasolinera2, peticio, peticio2, camio)
     # RemoveTrip
-    for camio in range(len(estado.camiones)):
-        if len(estado.camiones[camio]) > 1: # mirem si el camio té algun viatge
-            for tupla in range(1, len(estado.camiones[camio])):
-                trip = estado.camiones[camio][tupla]
+    for camio in range(len(camiones)):
+        if len(camiones[camio]) > 1: # mirem si el camio té algun viatge
+            for tupla in range(1, len(camiones[camio])):
+                trip = camiones[camio][tupla]
                 km = estado._distancia_viaje(camio, trip)
                 gasolinera = trip[0][0]
                 peticio = trip[0][1]
