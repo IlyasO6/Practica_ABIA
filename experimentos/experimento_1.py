@@ -7,7 +7,7 @@ sys.path.append(str(ROOT.parent))
 
 from _experimento import Experimento
 from problem_exp import GasProblem
-from state_exp import StateRepresentation, generate_initial_state, generate_initial_state_greedy
+from state_exp import generate_initial_state
 
 from Practica_ABIA.problem_parameters import ProblemParameters
 
