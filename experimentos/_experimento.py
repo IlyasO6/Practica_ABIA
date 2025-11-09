@@ -28,7 +28,7 @@ class Experimento:
             time_f = time()
             
             times_problem.append(time_f - time_i)
-            values_problem.append(node.beneficio - node.perdida)
+            values_problem.append((node.beneficio, node.distancia))
 
         media = sum(times_problem) / len(times_problem)
         times_problem.insert(0, media)

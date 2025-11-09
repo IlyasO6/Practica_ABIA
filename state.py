@@ -2,11 +2,9 @@ from __future__ import annotations
 import random
 
 from typing import Dict, List, Tuple
+from Practica_ABIA.abia_Gasolina import *
 from operators import *
-from abia_Gasolina import *
 from problem_parameters import ProblemParameters
-
-
 class StateRepresentation(object):
     
     MAX_KM = 640
@@ -21,11 +19,13 @@ class StateRepresentation(object):
                  asignaciones: List[List[int],],
                  camiones:list[list[int, Tuple,],],
                  beneficio:float, 
-                 distancia:float):    
+                 distancia:float,
+                 perdida_no_asignadas:float):    
         self.current_state = asignaciones
         self.camiones = camiones
         self.beneficio = beneficio
         self.distancia = distancia
+        self.perdida_no_asignadas = perdida_no_asignadas
         self.perdida = 0
 
     def _copy_camiones(self):
@@ -44,6 +44,7 @@ class StateRepresentation(object):
             camiones= self._copy_camiones(),
             beneficio= self.beneficio,
             distancia= self.distancia,
+            perdida_no_asignadas= self.perdida
         )
 
     def __repr__(self) -> str:
@@ -96,7 +97,7 @@ class StateRepresentation(object):
             for peticion in peticiones[i]:
                 sig_dia = peticion + 1
                 porcentaje_hoy = (100 - 2**peticion) / 100 if peticion > 0 else 1.02
-                porcentaje_sig = (100 - 2**sig_dia)
+                porcentaje_sig = (100 - 2**sig_dia) / 100
                 precio = 1000 * porcentaje_hoy
                 precio_sig = 1000 * porcentaje_sig
                 benefici_gasolinera.append((precio, precio_sig))
@@ -216,8 +217,9 @@ class StateRepresentation(object):
                                         id_peticion=idx_peticio, distancia_adicional=add
                                     )
                             
-    def apply_action(self, action: Operators) -> StateRepresentation:
+    def apply_action(self, action: Operators):
         new_state = self.copy()
+        delta_beneficio, delta_perdida = 0,0
         if isinstance(action, RemovePeticion):
             #  parametros del operador:
             camion = action.id_camion
@@ -226,6 +228,9 @@ class StateRepresentation(object):
             distancia_reducida = action.distancia_reducida
             # Actualizamos asignación
             gasolinera, peticion_idx = new_state.camiones[camion][viaje][peticion]
+            #  Actualizamos beneficio y perdida:
+            beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera][peticion_idx]
+            delta_perdida = beneficio_hoy - beneficio_sig
             #  Si eliminamos la primera peticion y hay una segunda, movemos la segunda a la primera posición: 
             if peticion_idx == 0 and len(new_state.current_state[gasolinera]) > 1 and new_state.current_state[gasolinera][1] is not None:
                 new_state.current_state[gasolinera][peticion_idx] = new_state.current_state[gasolinera][1]
@@ -291,6 +296,10 @@ class StateRepresentation(object):
             id_gasolinera = action.id_gasolinera
             id_peticion = action.id_peticion
             distancia_adicional = action.distancia_adicional
+            #  Actualizamos beneficio y perdida:
+            beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[id_gasolinera][id_peticion]
+            delta_beneficio = beneficio_hoy
+            delta_perdida = -(beneficio_hoy - beneficio_sig)
             #  Actualizamos asignación
             new_state.current_state[id_gasolinera][id_peticion] = id_camion
             #  Añadimos el nuevo viaje al camión y actualizamos distancias:
@@ -305,42 +314,33 @@ class StateRepresentation(object):
             id_gasolinera = action.id_gasolinera
             id_peticion = action.id_peticion
             distancia_adicional = action.distancia_adicional
+            #  Actualizamos beneficio y perdida:
+            beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[id_gasolinera][id_peticion]
+            delta_beneficio = beneficio_hoy
+            delta_perdida = -(beneficio_hoy - beneficio_sig)
             #  Actualizamos asignación
             new_state.current_state[id_gasolinera][id_peticion] = id_camion
             #  Añadimos la petición al viaje del camión y actualizamos distancias:
             new_state.camiones[id_camion][id_viaje].append((id_gasolinera, id_peticion))
             new_state.camiones[id_camion][0] += distancia_adicional
             new_state.distancia += distancia_adicional
-
+        
+        new_state.beneficio += delta_beneficio
+        new_state.perdida_no_asignadas += delta_perdida
         return new_state
 
     def path_cost(self):
-        perdida = self.distancia * 2  # Coste por km recorrido
-        for i in range(len(self.current_state)):
-            for j in range(len(self.current_state[i])):
-                #  sumamos las perdidas por peticiones no satisfechas:
-                if self.current_state[i][j] == None:
-                    beneficio_hoy, beneficio_sig = self.beneficio_peticiones[i][j]
-                    perdida += beneficio_hoy - beneficio_sig
-        self.perdida = perdida
-        return -perdida
+        self.perdida = self.perdida_no_asignadas + self.distancia * 2  # Coste por km recorrido
+        return self.perdida
             
 
     def heuristic(self):
-        beneficio_total = 0
-        for i in range(len(self.current_state)):
-            for j in range(len(self.current_state[i])):
-                #  sumamos solo las peticiones satisfechas:
-                if self.current_state[i][j] != None:
-                    beneficio, _ = self.beneficio_peticiones[i][j]
-                    beneficio_total += beneficio
-        self.beneficio = beneficio_total
-        return -beneficio_total
+        return self.beneficio
 
 #  state --> lista(lista(), lista())
 #  state -->   list(tuple(gas, camio2, camio1))
 
-def generate_initial_state(params: ProblemParameters):
+def generate_initial_state(params):
     n_centers = params.n_centers
     n_gas = params.n_gas
     multiplicitat = params.multiplicitat
@@ -361,11 +361,19 @@ def generate_initial_state(params: ProblemParameters):
     camions = [[0] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
 
     StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
+
+    perdida_total = 0
+    for gas in range(len(gas_stations)):
+        for pet in (range(len(gas_stations[gas]))):
+            beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
+            perdida_total += beneficio_hoy - beneficio_sig
+
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camions,
         beneficio=0,
-        distancia=0
+        distancia=0, 
+        perdida_no_asignadas=perdida_total
     )
 
 
@@ -466,11 +474,18 @@ def generate_initial_state_greedy(params: ProblemParameters):
                     beneficio_total += beneficio2
             else:
                 break
+    perdida_total = 0
+    for gas in range(len(gas_stations)):
+        for pet in (range(len(gas_stations[gas]))):
+            if gas_stations[gas][pet] == None:
+                beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
+                perdida_total += beneficio_hoy - beneficio_sig
     print(beneficio_total)
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,
         beneficio=beneficio_total,
-        distancia=distancia_total
+        distancia=distancia_total,
+        perdida_no_asignadas= perdida_total
     )
 

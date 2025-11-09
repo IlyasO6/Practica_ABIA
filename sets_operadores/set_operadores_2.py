@@ -103,6 +103,7 @@ def generate_actions_2(estado):
                             
 def apply_action_2(estado, action: Operators):
     new_state = estado.copy()
+    delta_beneficio, delta_perdida = 0,0
     if isinstance(action, RemovePeticion):
         #  parametros del operador:
         camion = action.id_camion
@@ -111,6 +112,9 @@ def apply_action_2(estado, action: Operators):
         distancia_reducida = action.distancia_reducida
         # Actualizamos asignación
         gasolinera, peticion_idx = new_state.camiones[camion][viaje][peticion]
+        #  Actualizamos beneficio y perdida:
+        beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera][peticion_idx]
+        delta_perdida = beneficio_hoy - beneficio_sig
         #  Si eliminamos la primera peticion y hay una segunda, movemos la segunda a la primera posición: 
         if peticion_idx == 0 and len(new_state.current_state[gasolinera]) > 1 and new_state.current_state[gasolinera][1] is not None:
             new_state.current_state[gasolinera][peticion_idx] = new_state.current_state[gasolinera][1]
@@ -151,6 +155,10 @@ def apply_action_2(estado, action: Operators):
         id_gasolinera = action.id_gasolinera
         id_peticion = action.id_peticion
         distancia_adicional = action.distancia_adicional
+        #  Actualizamos beneficio y perdida:
+        beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[id_gasolinera][id_peticion]
+        delta_beneficio = beneficio_hoy
+        delta_perdida = -(beneficio_hoy - beneficio_sig)
         #  Actualizamos asignación
         new_state.current_state[id_gasolinera][id_peticion] = id_camion
         #  Añadimos el nuevo viaje al camión y actualizamos distancias:
@@ -158,5 +166,7 @@ def apply_action_2(estado, action: Operators):
         new_state.camiones[id_camion][0] += distancia_adicional
         new_state.distancia += distancia_adicional
 
+    new_state.beneficio += delta_beneficio
+    new_state.perdida_no_asignadas += delta_perdida
 
     return new_state

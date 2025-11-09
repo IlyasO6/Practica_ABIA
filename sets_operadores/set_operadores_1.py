@@ -44,7 +44,7 @@ class RemoveTrip(Operators):
             return f"Eliminem l'assoliment de les peticions: {self.peticio1} de la benzinera {self.gasolinera1} i {self.peticio2} de la benzinera {self.gasolinera2}" 
 
 #  Generate Action
-    # AddOnlyTrip
+    #  AddOnlyTrip
 def generate_actions_1(estado):
     camiones = estado._copy_camiones()
     gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
@@ -81,18 +81,25 @@ def generate_actions_1(estado):
 #  Apply Action
 def apply_action_1(estado, action: Operators):
     new_state = estado.copy()
+    delta_beneficio, delta_perdida = 0,0
     if isinstance(action, RemoveTrip):
-        print("Remove")
         #  Parametros del operador:
         gasolinera1 = action.gasolinera1
         peticio1 = action.peticio1
         if action.gasolinera2 and action.peticio2:
             gasolinera2 = action.gasolinera2
             peticio2 = action.peticio2
-            new_state.current_state[gasolinera2][peticio2] = None #  Eliminamos la asignación
+            #  Actualizamos perdida:
+            beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera2][peticio2]
+            delta_perdida = beneficio_hoy - beneficio_sig
+            #  Eliminamos la asignación
+            new_state.current_state[gasolinera2][peticio2] = None 
         camio = action.camio
         trip = action.trip
         km = action.km
+        #  Actualizamos perdida:
+        beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera1][peticio1]
+        delta_perdida += beneficio_hoy - beneficio_sig
         #  Eliminamos la asignación
         new_state.current_state[gasolinera1][peticio1] = None
         del new_state.camiones[camio][trip]
@@ -100,12 +107,15 @@ def apply_action_1(estado, action: Operators):
         new_state.distancia -= km
     
     elif isinstance(action, AddOnlyTrip):
-        print("Add Only")
         #  Parametros del operador:
         gasolinera = action.gasolinera
         peticio = action.peticio
         camio = action.camio
         km = action.km
+        #  Actualizamos beneficio y perdida
+        beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera][peticio]
+        delta_perdida = -(beneficio_hoy - beneficio_sig)
+        delta_beneficio = beneficio_hoy
         #  Creamos la asignación
         new_state.current_state[gasolinera][peticio] = camio
         new_state.camiones[camio].append([(gasolinera, peticio)])
@@ -114,20 +124,29 @@ def apply_action_1(estado, action: Operators):
 
     elif isinstance(action, AddMultipleTrip):
         #  Parametros del operador:
-        print("Add multiple")
         gasolinera1 = action.gasolinera1
         peticio1 = action.peticio1
         gasolinera2 = action.gasolinera2
         peticio2 = action.peticio2
         camio = action.camio
         km = action.km
+        #  Actualizamos perdida y beneficio:
+        beneficio_hoy1, beneficio_sig1 = new_state.beneficio_peticiones[gasolinera1][peticio1]
+        beneficio_hoy2, beneficio_sig2 = new_state.beneficio_peticiones[gasolinera2][peticio2]
+        delta_perdida1 = -(beneficio_hoy1 - beneficio_sig1)
+        delta_beneficio1 = beneficio_hoy1
+        delta_perdida2 = -(beneficio_hoy2 - beneficio_sig2)
+        delta_beneficio2 = beneficio_hoy2
+        delta_perdida = delta_perdida1 + delta_perdida2
+        delta_beneficio = delta_beneficio1 + delta_beneficio2
         #  Creamos la asignación
         new_state.current_state[gasolinera1][peticio1] = camio
         new_state.current_state[gasolinera2][peticio2] = camio
         new_state.camiones[camio].append([(gasolinera1, peticio1), (gasolinera2, peticio2)])
         new_state.camiones[camio][0] += km
         new_state.distancia += km
-        print(f"camion: {camio}")
-        print(new_state.camiones)
-        
+        #print(f"camion: {camio}")
+        #print(new_state.camiones)
+    new_state.beneficio += delta_beneficio
+    new_state.perdida_no_asignadas += delta_perdida
     return new_state
