@@ -34,10 +34,12 @@ class GasProblem(Problem):
         beneficio = state.heuristic()
         no_satisfechas, distancia = state.path_cost()
         alpha = 1
-        beta = 0.1
-        gamma = 0.4
-        h = alpha*beneficio - no_satisfechas*beta - distancia*gamma
-        print(h)
+        beta = 0.5
+        gamma = 1
+
+
+        h = alpha*beneficio / (abs(no_satisfechas)*beta + abs(distancia)*gamma)
+
         return h
         #  buscamos maximizar entonces el heurístico es (-) y el path cost (+)
         #  ambos se retornan como (-) desde state

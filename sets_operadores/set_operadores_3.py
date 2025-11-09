@@ -166,6 +166,7 @@ def apply_action_3(estado, action: Operators):
         #  Actualizamos beneficio y perdida:
         beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera][peticion_idx]
         delta_perdida = beneficio_hoy - beneficio_sig
+        delta_beneficio = -beneficio_hoy
         #  Si eliminamos la primera peticion y hay una segunda, movemos la segunda a la primera posición: 
         if peticion_idx == 0 and len(new_state.current_state[gasolinera]) > 1 and new_state.current_state[gasolinera][1] is not None:
             new_state.current_state[gasolinera][peticion_idx] = new_state.current_state[gasolinera][1]
@@ -177,8 +178,8 @@ def apply_action_3(estado, action: Operators):
         if not new_state.camiones[camion][viaje]:
             del new_state.camiones[camion][viaje]
         #  actualizamos distancias:
-        new_state.camiones[camion][0] -= distancia_reducida
-        new_state.distancia -= distancia_reducida
+        new_state.camiones[camion][0] += distancia_reducida
+        new_state.distancia += distancia_reducida
     
     elif isinstance(action, MovePeticion):
         #  parametros del operador:
