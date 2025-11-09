@@ -68,7 +68,7 @@ class FillViaje(Operators):
 
 
 def generate_actions_3(estado):
-    camiones = estado._copy_camiones()
+    camiones = estado.camiones
     # Remove, Move, Swap 
     for idx_camion_1, camion_1 in enumerate(camiones):
         #  si el camion no tiene viajes, skip:
@@ -108,6 +108,8 @@ def generate_actions_3(estado):
                                 )
                         for idx_peticion_camion_2 in range(len(viaje_2)):
                             if idx_camion_1 == idx_camion_2 and idx_viaje_camion_1 == idx2 and idx_peticion_camion_1 == idx_peticion_camion_2:
+                                continue
+                            if (idx_camion_1, idx_viaje_camion_1, idx_peticion_camion_1) >= (idx_camion_2, idx2, idx_peticion_camion_2):
                                 continue
                             #  copiamos las listas de los viajes en listas temporales:
                             nuevo_v1 = [tupla for tupla in viaje_1]
