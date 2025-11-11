@@ -70,6 +70,8 @@ def generate_actions_2(estado):
                             for idx_peticion_camion_2 in range(len(viaje_2)):
                                 if idx_camion_1 == idx_camion_2 and idx_viaje_camion_1 == idx_viaje_camion_2 and idx_peticion_camion_1 == idx_peticion_camion_2:
                                     continue
+                                if (idx_camion_1, idx_viaje_camion_1, idx_peticion_camion_1) >= (idx_camion_2, idx_viaje_camion_2, idx_peticion_camion_2):
+                                    continue
                                 #  copiamos las listas de los viajes en listas temporales:
                                 nuevo_v1 = [tupla for tupla in viaje_1]
                                 nuevo_v2 = [tupla for tupla in viaje_2] 
@@ -115,6 +117,7 @@ def apply_action_2(estado, action: Operators):
         #  Actualizamos beneficio y perdida:
         beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera][peticion_idx]
         delta_perdida = beneficio_hoy - beneficio_sig
+        delta_beneficio = -beneficio_hoy
         #  Si eliminamos la primera peticion y hay una segunda, movemos la segunda a la primera posición: 
         if peticion_idx == 0 and len(new_state.current_state[gasolinera]) > 1 and new_state.current_state[gasolinera][1] is not None:
             new_state.current_state[gasolinera][peticion_idx] = new_state.current_state[gasolinera][1]

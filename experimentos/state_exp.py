@@ -179,11 +179,11 @@ def generate_initial_state(params):
     )
 
 
-def generate_initial_state_greedy(params: ProblemParameters):
+def generate_initial_state_greedy(params: ProblemParameters, seed = None):
     n_centers = params.n_centers
     n_gas = params.n_gas
     multiplicitat = params.multiplicitat
-    seed = random.randint(0, 10000)
+    seed = random.randint(0, 10000) if seed== None else seed
     gasolineras = Gasolineras(num_gasolineras=n_gas, seed=seed).gasolineras
     peticiones = [gasolinera.peticiones for gasolinera in gasolineras]
     

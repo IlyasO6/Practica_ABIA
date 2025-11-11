@@ -28,7 +28,7 @@ class Experimento:
             time_f = time()
             
             times_problem.append(time_f - time_i)
-            values_problem.append(node.beneficio)
+            values_problem.append(node.beneficio - node.distancia*2)
 
         media = sum(times_problem) / len(times_problem)
         media_heuristica = sum(values_problem) / len(values_problem)
@@ -58,7 +58,7 @@ class Experimento:
             labels.append(value[0])
             times_to_plot.append(value[1][0][1:])
             heuristics_to_plot.append(value[1][1][1:])
-            
+
         plt.boxplot(heuristics_to_plot, tick_labels=labels)
         plt.ylabel("Valor heurístic (benefici)")
         plt.title("Comparativa d'operadors amb Boxplots")

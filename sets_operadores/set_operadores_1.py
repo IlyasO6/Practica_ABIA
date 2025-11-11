@@ -78,6 +78,8 @@ def generate_actions_1(estado):
                     peticio2 = trip[1][1]
                     yield RemoveTrip(km, camio, tupla, gasolinera, peticio, gasolinera2, peticio2)
 
+    def generate_one_action(estado):
+        pass
 #  Apply Action
 def apply_action_1(estado, action: Operators):
     new_state = estado.copy()
@@ -92,6 +94,7 @@ def apply_action_1(estado, action: Operators):
             #  Actualizamos perdida:
             beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera2][peticio2]
             delta_perdida = beneficio_hoy - beneficio_sig
+            delta_beneficio = -beneficio_hoy
             #  Eliminamos la asignación
             new_state.current_state[gasolinera2][peticio2] = None 
         camio = action.camio
@@ -100,6 +103,7 @@ def apply_action_1(estado, action: Operators):
         #  Actualizamos perdida:
         beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[gasolinera1][peticio1]
         delta_perdida += beneficio_hoy - beneficio_sig
+        delta_beneficio += -beneficio_hoy
         #  Eliminamos la asignación
         new_state.current_state[gasolinera1][peticio1] = None
         del new_state.camiones[camio][trip]
