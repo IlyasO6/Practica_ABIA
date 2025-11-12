@@ -122,7 +122,7 @@ class StateRepresentation(object):
 
     def _dist_g_g(self, g1: int, g2: int) -> int:
         return self.dists_gasolineras[g1][g2]
-
+    
     def _distancia_ruta(self, camion_id: int, ruta: List[Tuple[int, int]]) -> int:
         distancia = 0
         if ruta and any(ruta):
