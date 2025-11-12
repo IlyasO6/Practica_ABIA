@@ -6,9 +6,9 @@ from aima.search import Problem
 from Practica_ABIA.sets_operadores.set_operadores_1 import generate_actions_1, apply_action_1
 from Practica_ABIA.sets_operadores.set_operadores_2 import generate_actions_2, apply_action_2
 from Practica_ABIA.sets_operadores.set_operadores_3 import generate_actions_3, apply_action_3
-from Practica_ABIA.sets_operadores.set_operadores_x import generate_actionsx, apply_actionx
+from Practica_ABIA.sets_operadores.set_operadores_x import generate_actionsx, apply_actionx, generate_one_actionx
 class GasProblem(Problem):
-    def __init__(self, initial_state, set_operadores):
+    def __init__(self, initial_state, set_operadores, algoritmo:int=1):
         self.set_operadores = set_operadores
         if set_operadores == 1:
             self.generate = generate_actions_1
@@ -20,9 +20,11 @@ class GasProblem(Problem):
             self.generate = generate_actions_3
             self.apply = apply_action_3
         else:
-            self.generate = generate_actionsx
+            if algoritmo == 1:
+                self.generate = generate_actionsx
+            if algoritmo == 2:
+                self.generate = generate_one_actionx
             self.apply = apply_actionx
-
 
         super().__init__(initial_state)
 
@@ -44,7 +46,6 @@ class GasProblem(Problem):
         #h = beneficio
         h = alpha*beneficio - distancia*beta - no_satisfechas*gamma
         #h = alpha*beneficio / (abs(no_satisfechas)*beta + abs(distancia)*gamma)
-        #print(h)
         return h
         #  buscamos maximizar entonces el heurístico es (-) y el path cost (+)
         #  ambos se retornan como (-) desde state

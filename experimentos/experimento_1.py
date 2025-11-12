@@ -18,15 +18,11 @@ params = ProblemParameters(n_distribution_centers= 10,
                            n_gas_stations= 100,
                            multiplicitat= 1)
 
-initial_state_x = generate_initial_state_greedy(params=params)
-initial_state = generate_initial_state_greedy(params=params)
+initial_state_x = generate_initial_state(params=params)
 
-problem_op1 = GasProblem(initial_state=initial_state, set_operadores=1)
-problem_op2 = GasProblem(initial_state=initial_state, set_operadores=2)
-problem_op3 = GasProblem(initial_state=initial_state, set_operadores=3)
-problem_opx = GasProblem(initial_state=initial_state_x, set_operadores=0)
+problem_opx = GasProblem(initial_state=initial_state_x, set_operadores=0, algoritmo=2)
 
-Exp.experimento(0, opx = problem_opx, op1 = problem_op1)
+Exp.experimento(2, opx = problem_opx)
 
 for i,j in Exp.cache.items():
     print(i, j, file=open("experimentos/resultados_1.txt", "a"))

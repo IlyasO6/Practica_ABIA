@@ -7,7 +7,6 @@ sys.path.append(str(ROOT.parent))
 
 from _experimento import Experimento
 from problem_exp import GasProblem
-from state_exp2 import generate_initial_state_greedy_x
 from state_exp import generate_initial_state_greedy
 
 from Practica_ABIA.problem_parameters import ProblemParameters
@@ -19,13 +18,12 @@ params = ProblemParameters(n_distribution_centers= 10,
                            n_gas_stations= 100,
                            multiplicitat= 1)
 
-initial_state_x = generate_initial_state_greedy_x(params=params)
 initial_state = generate_initial_state_greedy(params=params, seed= 1234)
 
 problem_op1 = GasProblem(initial_state=initial_state, set_operadores=1)
 problem_op2 = GasProblem(initial_state=initial_state, set_operadores=2)
 problem_op3 = GasProblem(initial_state=initial_state, set_operadores=3)
-problem_opx = GasProblem(initial_state=initial_state_x, set_operadores=0)
+problem_opx = GasProblem(initial_state=initial_state, set_operadores=0)
 
 Exp.experimento(0, op1 = problem_op1, opx = problem_opx)
 

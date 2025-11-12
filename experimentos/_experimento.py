@@ -14,9 +14,10 @@ class Experimento:
         self.cache = dict()
     
     def _experimento(self, algoritmo, problem):
-        if algoritmo == 0:
+        if algoritmo == 1:
             func = hill_climbing
         else:
+            print("SA")
             func = simulated_annealing
 
         times_problem = list()

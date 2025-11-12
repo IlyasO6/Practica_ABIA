@@ -118,10 +118,140 @@ def generate_actionsx(estado):
                                                     idx_camion=idx_camion, idx_posicion=idx_posicion,
                                                     diferencia_dist= diferencia_dist)
 
-def generate_one_action(estado):
-    random_value = random.random()
-
+def generate_one_actionx(estado):
+    camiones = estado.camiones
+    n_camiones = len(camiones)
+    idxs_camion = list(range(n_camiones))
     
+    def km(camion_id, ruta=None):
+        r = estado.camiones[camion_id] if ruta is None else ruta
+        return estado._distancia_ruta(camion_id=camion_id, ruta=r)
+    
+    def assign():
+        libres = [(g, p)
+                  for g in range(len(estado.current_state))
+                  for p in range(len(estado.current_state[g]))
+                  if estado.current_state[g][p] is None]
+
+        if not libres:
+            return None
+        
+        random.shuffle(libres)
+
+        random.shuffle(idxs_camion)
+        for g, p in libres:
+            for idx_camion in idxs_camion:
+                ruta = camiones[idx_camion]
+                if len(ruta) < 2 * MAX_VIAJES:
+                    pos = random.randrange(len(ruta) + 1)
+                    copia_ruta = ruta.copy()
+                    copia_ruta.insert(pos, (g,p))
+                    distancia_anterior = estado.km_camiones[idx_camion]
+                    distancia_posterior = estado._distancia_ruta(camion_id=idx_camion, ruta=copia_ruta)
+
+                    if distancia_posterior <= MAX_KM:
+                        return AssignPetition(
+                            idx_gasolinera= g,
+                            idx_peticion=p,
+                            idx_camion=idx_camion,
+                            idx_posicion=pos,
+                            diferencia_dist= distancia_posterior - distancia_anterior
+                        )
+        return None
+    def move():
+        candidatos = [(idx_camion, idx_posicion)
+                for idx_camion, ruta in enumerate(estado.camiones)
+                for idx_posicion in range(len(ruta))
+                if ruta and ruta[idx_posicion] is not None]
+        random.shuffle(candidatos)
+        for idx_camion1, idx_posicion1 in candidatos:
+            peticion = estado.camiones[idx_camion1][idx_posicion1]
+            ruta1 = estado.camiones[idx_camion1]
+            ruta1_post = ruta1.copy()
+
+            ruta1_post[idx_posicion1] = None
+            distancia_anterior1 = estado.km_camiones[idx_camion1]
+            distancia_posterior1 = estado._distancia_ruta(camion_id=idx_camion1, ruta=ruta1_post)
+            diferencia_distancia1 = distancia_posterior1 - distancia_anterior1
+
+
+            random.shuffle(idxs_camion)
+            for idx_camion2 in idxs_camion:
+                if idx_camion2 == idx_camion1:
+                    continue
+                ruta2 = estado.camiones[idx_camion2]
+                if len(ruta2) < 2 * MAX_VIAJES:
+                    
+                    pos2 = random.randrange(len(ruta2) + 1)
+                    ruta2_post = ruta2.copy()
+                    ruta2_post.insert(pos2, peticion)
+                    distancia_anterior2 = estado.km_camiones[idx_camion2]
+                    distancia_posterior2 = estado._distancia_ruta(camion_id=idx_camion2, ruta=ruta2_post)
+                    if distancia_posterior2 <= MAX_KM:
+                        return MovePetition(
+                            idx_posicion1=idx_posicion1,
+                            idx_posicion2=pos2,
+                            idx_camion1=idx_camion1,
+                            idx_camion2=idx_camion2,
+                            diferencia_dist1=diferencia_distancia1,
+                            diferencia_dist2=distancia_posterior2 - distancia_anterior2
+                        )
+        return None
+
+    def intra_swap():
+        random.shuffle(idxs_camion)
+        for idx_camion in idxs_camion:
+            ruta = estado.camiones[idx_camion]
+            pos_validas = [i for i, x in enumerate(ruta) if x is not None]
+            if len(pos_validas) < 2:
+                continue
+            i, j = random.sample(pos_validas, 2)
+            copia_ruta = ruta.copy()
+            copia_ruta[i], copia_ruta[j] = copia_ruta[j], copia_ruta[i]
+            distancia_posterior = estado._distancia_ruta(camion_id=idx_camion, ruta=copia_ruta)
+            if distancia_posterior <= MAX_KM:
+                return IntraSwap(
+                    idx_camion=idx_camion,
+                    idx_posicion1=i,
+                    idx_posicion2=j,
+                    diferencia_dist=distancia_posterior - km(idx_camion, ruta)
+                )
+        return None
+
+    def remove():
+        candidatos = [(idx_camion, idx_posicion)
+                for idx_camion, ruta in enumerate(camiones)
+                for idx_posicion in range(len(ruta))
+                if ruta and ruta[idx_posicion] is not None]
+        if candidatos:
+            idx_camion, idx_posicion = random.choice(candidatos)
+            ruta = estado.camiones[idx_camion]
+            copia_ruta = ruta.copy()
+            # si tu apply_actionx elimina con pop, usa pop aquí también
+            copia_ruta[idx_posicion] = None
+            distancia_posterior = estado._distancia_ruta(camion_id=idx_camion, ruta=copia_ruta)
+            return RemovePetition(
+                idx_posicion=idx_posicion,
+                idx_camion=idx_camion,
+                diferencia_dist=distancia_posterior - estado.km_camiones[idx_camion]
+            )
+        return None
+    
+    ops = ["assign", "move", "swap", "remove"]
+    random.shuffle(ops)
+
+    for op in ops:
+        if op == "assign":
+            action = assign()
+        elif op == "move":
+            action = move()
+        elif op == "swap":
+            action = intra_swap()
+        else:
+            action = remove()
+        if action is not None:
+            return [action]
+    return None
 
 
 def apply_actionx(estado, action):
