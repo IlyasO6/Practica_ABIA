@@ -84,7 +84,7 @@ def generate_actions1x(estado):
                             for idx_camio, camio in enumerate(camiones):
                                 distancia = estado._dist_c_g(idx_camio, idx_gasolinera)
                                 km = distancia*2
-                                km2 = distancia + estado._dist_c_g(idx_gasolinera, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)                            
+                                km2 = distancia + estado._dist_g_g(idx_gasolinera, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)                            
                                 if estado.km_camiones[idx_camio]+km2 < MAX_KM and len(camio) < 2 * MAX_VIAJES:
 # AddOnlyTrip                                
                                     yield AddOnlyTrip(km, idx_gasolinera, idx_peticio, idx_camio)
@@ -104,7 +104,7 @@ def generate_actions1x(estado):
                                         if tupla2 is not None:
                                             idx_g2 = tupla2[0]
                                             idx_p2 = tupla2[1]
-                                            km2 = distancia + estado._dist_c_g(idx_g, idx_g2) + estado._dist_c_g(idx_camio, idx_g2)
+                                            km2 = distancia + estado._dist_g_g(idx_g, idx_g2) + estado._dist_c_g(idx_camio, idx_g2)
                                         else:
                                             idx_g2 = None
                                             idx_p2 = None
@@ -185,8 +185,14 @@ def generate_one_action1x(estado):
         idx_tupla = random.randrange(0, len(camiones[idx_camio]) - 1, 2)
         idx_g = camiones[idx_camio][idx_tupla][0]
         idx_p = camiones[idx_camio][idx_tupla][1]
-        idx_g2 = camiones[idx_camio][idx_tupla+1][0]
-        idx_p2 = camiones[idx_camio][idx_tupla+1][1]
+        idx_g2 = None
+        idx_p2 = None
+        distancia = estado._dist_c_g(idx_camio, idx_g)
+        km = distancia*2
+        if camiones[idx_camio][idx_tupla+1] is not None:
+            idx_g2 = camiones[idx_camio][idx_tupla+1][0]
+            idx_p2 = camiones[idx_camio][idx_tupla+1][1]
+            km = distancia + estado._dist_g_g(idx_g, idx_g2) + estado._dist_c_g(idx_camio, idx_g2)
         yield RemoveTrip(km, idx_camio, idx_tupla, idx_g, idx_p, idx_g2, idx_p2)
 
 #_______________________________________________________________________________________________________________
