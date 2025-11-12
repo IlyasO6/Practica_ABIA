@@ -29,7 +29,7 @@ class Experimento:
             time_f = time()
             
             times_problem.append(time_f - time_i)
-            values_problem.append((node.beneficio - sum(node.km_camiones), sum(node.km_camiones)))
+            values_problem.append((node.beneficio, node.distancia))
             h.append(node.beneficio)
 
         media = sum(times_problem) / len(times_problem)
@@ -50,9 +50,11 @@ class Experimento:
             print(f"---Problem {nombres[i]}---")
             resultado = self._experimento(algoritmo = algoritmo, problem = problems[i])
             self.cache[i] = (nombres[i], resultado)
+        
+        return self.cache
 
 
-    def get_plt(self):
+    def get_plt(self, name:str='resultat'):
         heuristics_to_plot = list()
         times_to_plot = list()
         labels = list()
@@ -64,4 +66,5 @@ class Experimento:
         plt.boxplot(heuristics_to_plot, tick_labels=labels)
         plt.ylabel("Valor heurístic (benefici)")
         plt.title("Comparativa d'operadors amb Boxplots")
-        plt.savefig('resultat.png')
+        name += 'png'
+        plt.savefig(name)

@@ -17,14 +17,14 @@ class StateRepresentation(object):
 
     def __init__(self, 
                  asignaciones: List[List[int],],
-                 camiones:list[list[Tuple,],],
-                 km_camiones:list,
+                 camiones:list[list[int, Tuple,],],
                  beneficio:float, 
+                 distancia:float,
                  perdida_no_asignadas:float):    
         self.current_state = asignaciones
         self.camiones = camiones
-        self.km_camiones = km_camiones
         self.beneficio = beneficio
+        self.distancia = distancia
         self.perdida_no_asignadas = perdida_no_asignadas
         self.perdida = 0
 
@@ -41,9 +41,9 @@ class StateRepresentation(object):
 
         return StateRepresentation(
             asignaciones= [list(gasolinera) for gasolinera in self.current_state],
-            camiones= [camion.copy() for camion in self.camiones],
-            km_camiones= self.km_camiones.copy(),
+            camiones= self._copy_camiones(),
             beneficio= self.beneficio,
+            distancia= self.distancia,
             perdida_no_asignadas= self.perdida_no_asignadas
         )
 
@@ -66,7 +66,7 @@ class StateRepresentation(object):
                 msg.append(f"\nPeticion {j}: {servicio}")
             
             msg.append("\n\n")
-        msg.append(f"\n\nCamiones:\n {self.camiones} \n\nBeneficio total: {self.beneficio}. \nDistancia total: {sum(self.km_camiones)}")
+        msg.append(f"\n\nCamiones:\n {self.camiones} \n\nBeneficio total: {self.beneficio - self.perdida}")
         msg.insert(0, "ASIGNACION FINAL:\n")
         return "".join(msg)
         
@@ -168,8 +168,8 @@ def generate_initial_state(params):
     centros_coords = [(centro.cx, centro.cy) for centro in 
         CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros]
     
-    camions = [[None] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
-    km_camiones = [0 for _ in centros_coords]
+    camions = [[0] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
+
     StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
 
     perdida_total = 0
@@ -181,8 +181,8 @@ def generate_initial_state(params):
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camions,
-        km_camiones=km_camiones, 
         beneficio=0,
+        distancia=0, 
         perdida_no_asignadas=perdida_total
     )
 
@@ -215,8 +215,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
         cluster_asignado = distancias.index(min(distancias))
         clusters.append(cluster_asignado)
     
-    camiones = [[] for _ in centros_coords]
-    km_camiones = [0 for _ in centros_coords]
+    camiones = [[0] for _ in centros_coords]
+
     distancia_total = 0
     beneficio_total = 0
     for id_camion in range(len(centros_coords)):
@@ -269,8 +269,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
                                                                 gasolinera2= None if len(viaje) < 2 else viaje[1][0])
             
             if km + km_viaje <= 640:
-                camiones[id_camion].extend(viaje)
-                km_camiones[id_camion] += km_viaje
+                camiones[id_camion].append(viaje)
+                camiones[id_camion][0] += km_viaje
                 km += km_viaje
                 distancia_total += km_viaje
                 beneficio_total += beneficio1
@@ -294,8 +294,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,
-        km_camiones=km_camiones,
         beneficio=beneficio_total,
+        distancia=distancia_total,
         perdida_no_asignadas= perdida_total
     )
 

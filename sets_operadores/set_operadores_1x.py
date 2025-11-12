@@ -130,7 +130,7 @@ def generate_one_action1x(estado):
         idx_gasolinera1 = validas.pop(random_value*len(validas))
         random_value = random.random()
         idx_gasolinera2 = validas.pop(random_value*len(validas))
-        
+
 
         for gasolinera in gasolineras:
             for peticion in gasolinera:
@@ -176,8 +176,6 @@ def generate_one_action1x(estado):
                                             idx_g2 = None
                                             idx_p2 = None
                                             yield RemoveTrip(km, idx_camio, idx_tupla, idx_g, idx_p, idx_g2, idx_p2)
-
-    pass
 
 #_______________________________________________________________________________________________________________
 #  Apply Action

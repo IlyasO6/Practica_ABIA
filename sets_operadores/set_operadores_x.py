@@ -1,5 +1,5 @@
 from typing import Dict, List, Tuple
-
+import random
 #  Operadores
 class GasOperators(object):
     def __init__(self):
@@ -64,22 +64,25 @@ def generate_actionsx(estado):
     # asignar y eliminar
     for idx_camion, camion in enumerate(camiones):
         for idx_posicion in range(len(camion)):
-            distancia_anterior1 = estado._distancia_ruta(camion_id = idx_camion, ruta = camion)
+            distancia_anterior1 = estado.km_camiones[idx_camion]
             if len(camion) > 0 and camion[idx_posicion] is not None:
                 #  Remove peticion
                 copia_camion = camion.copy()
-                copia_camion.pop(idx_posicion)
+                copia_camion[idx_posicion] = None
                 distancia_posterior1 = estado._distancia_ruta(camion_id = idx_camion, ruta = copia_camion)
                 diferencia_dist = distancia_posterior1 - distancia_anterior1
                 yield RemovePetition(idx_camion=idx_camion, idx_posicion=idx_posicion, 
                                      diferencia_dist= diferencia_dist)
                 #  Move peticion
                 for idx_camion2, camion2 in enumerate(camiones):
-                    for idx_posicion2 in range(len(camion2)):
-                        if len(camion2) < 2 * MAX_VIAJES and camion2[idx_posicion2] is None:
-                            distancia_anterior2 = estado._distancia_ruta(camion_id = idx_camion2, ruta = camion2)
-                            copia_camion = camion2.copy()
-                            copia_camion.insert(idx_posicion2, camion[idx_posicion])
+                    if idx_camion == idx_camion2:
+                        continue
+                    distancia_anterior2 = estado.km_camiones[idx_camion2]
+                    for idx_posicion2 in range(len(camion2) + 1):
+                        copia_camion = camion2.copy()
+                        copia_camion.insert(idx_posicion2, camion[idx_posicion])
+                        
+                        if len(copia_camion) < 2 * MAX_VIAJES:
                             distancia_posterior2 = estado._distancia_ruta(camion_id = idx_camion2, ruta = copia_camion)
                             diferencia_dist2 = distancia_posterior2 - distancia_anterior2
                             if distancia_posterior2 < MAX_KM:
@@ -104,17 +107,21 @@ def generate_actionsx(estado):
             if estado.current_state[idx_gasolinera][idx_peticion] is None:
                 for idx_camion, camion in enumerate(camiones):
                     if len(camion) < 2 * MAX_VIAJES:
-                        distancia_anterior1 = estado._distancia_ruta(camion_id = idx_camion, ruta = camion)
-                        for idx_posicion in range(len(camion)):
+                        distancia_anterior1 = estado.km_camiones[idx_camion]
+                        for idx_posicion in range(len(camion) + 1):
                             copia_camion = camion.copy()
                             copia_camion.insert(idx_posicion, (idx_gasolinera, idx_peticion))
-                            distancia_posterior1 = estado._distancia_ruta(camion_id = idx_camion, ruta = camion)
+                            distancia_posterior1 = estado._distancia_ruta(camion_id = idx_camion, ruta = copia_camion)
                             diferencia_dist = distancia_posterior1 - distancia_anterior1
                             if distancia_posterior1 < MAX_KM:
                                 yield AssignPetition(idx_gasolinera=idx_gasolinera, idx_peticion=idx_peticion, 
                                                     idx_camion=idx_camion, idx_posicion=idx_posicion,
                                                     diferencia_dist= diferencia_dist)
 
+def generate_one_action(estado):
+    random_value = random.random()
+
+    
 
 
 def apply_actionx(estado, action):
@@ -128,6 +135,7 @@ def apply_actionx(estado, action):
         delta_beneficio = beneficio_hoy
         delta_perdida = -(beneficio_hoy - beneficio_sig)
         new_state.km_camiones[action.idx_camion] += action.diferencia_dist
+        new_state.distancia += action.diferencia_dist
 
     elif isinstance(action, MovePetition):
         peticion = new_state.camiones[action.idx_camion1][action.idx_posicion1]
@@ -136,6 +144,8 @@ def apply_actionx(estado, action):
 
         new_state.km_camiones[action.idx_camion1] += action.diferencia_dist1
         new_state.km_camiones[action.idx_camion2] += action.diferencia_dist2
+
+        new_state.distancia += action.diferencia_dist1 + action.diferencia_dist2
 
 
     elif isinstance(action, RemovePetition):
@@ -148,6 +158,7 @@ def apply_actionx(estado, action):
         delta_perdida = beneficio_hoy - beneficio_sig
 
         new_state.km_camiones[action.idx_camion] += action.diferencia_dist
+        new_state.distancia += action.diferencia_dist
 
     elif isinstance(action, IntraSwap):
         camion = new_state.camiones[action.idx_camion]
@@ -156,6 +167,7 @@ def apply_actionx(estado, action):
         camion[action.idx_posicion2] = temp
 
         new_state.km_camiones[action.idx_camion] += action.diferencia_dist
+        new_state.distancia += action.diferencia_dist
         
     new_state.beneficio += delta_beneficio
     new_state.perdida_no_asignadas += delta_perdida

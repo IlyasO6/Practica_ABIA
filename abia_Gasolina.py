@@ -120,19 +120,19 @@ if __name__ == "__main__":
     c = CentrosDistribucion(10, 1, 1234)
     histograma = [0, 0, 0, 0]
 
-    for i in range(len(s.gasolineras)):
-        print(f"Gasolinera {i}: {s.gasolineras[i].cx} {s.gasolineras[i].cy}")
+    for idx_posicion in range(len(s.gasolineras)):
+        print(f"Gasolinera {idx_posicion}: {s.gasolineras[idx_posicion].cx} {s.gasolineras[idx_posicion].cy}")
         j = 0
-        if not s.gasolineras[i].peticiones:
+        if not s.gasolineras[idx_posicion].peticiones:
             print("-> Sin peticiones <-")
-        for peticion in s.gasolineras[i].peticiones:
+        for peticion in s.gasolineras[idx_posicion].peticiones:
             print(f"Peticion {j}: Días {peticion}")
             j += 1
             histograma[peticion] += 1
 
     print()
-    for i in range(4):
-        print(f"{histograma[i]} de {i} días")
+    for idx_posicion in range(4):
+        print(f"{histograma[idx_posicion]} de {idx_posicion} días")
     print()
-    for i in range(len(c.centros)):
-        print(f"Centro {i}: {c.centros[i].cx} {c.centros[i].cy}")
+    for idx_posicion in range(len(c.centros)):
+        print(f"Centro {idx_posicion}: {c.centros[idx_posicion].cx} {c.centros[idx_posicion].cy}")
