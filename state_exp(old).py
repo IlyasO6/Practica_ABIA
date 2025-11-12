@@ -122,19 +122,27 @@ class StateRepresentation(object):
 
     def _dist_g_g(self, g1: int, g2: int) -> int:
         return self.dists_gasolineras[g1][g2]
-
-    def _distancia_viaje(self, camion_id: int, viaje: List[Tuple[int, int]]) -> int:
-        if not viaje:
-            return 0
-        g1 = viaje[0][0]
-        if len(viaje) == 1:
-            return 2 * self._dist_c_g(camion_id, g1)
-        g2 = viaje[1][0]
-        return self._dist_c_g(camion_id, g1) + self._dist_g_g(g1, g2) + self._dist_c_g(camion_id, g2)
-
-    def path_cost(self):
-        return self.perdida_no_asignadas , self.distancia*2
-            
+    
+    def _distancia_ruta(self, camion_id: int, ruta: List[Tuple[int, int]]) -> int:
+        distancia = 0
+        if ruta and any(ruta):
+            for idx_posicion in range(len(ruta)):
+                
+                peticion = ruta[idx_posicion]
+                if peticion is None and ruta[idx_posicion - 1] is None:
+                    continue
+                elif peticion is None:
+                    g = ruta[idx_posicion - 1][0]
+                    distancia += self._dist_c_g(camion_id, g)
+                elif idx_posicion % 2 != 0 and ruta[idx_posicion - 1] is not None:
+                    g_anterior = ruta[idx_posicion - 1][0]
+                    g = peticion[0]
+                    distancia += self._dist_g_g(g_anterior, g)
+                else:
+                    g = peticion[0]
+                
+                distancia += self._dist_c_g(camion_id, g)
+        return distancia        
 
     def heuristic(self):
         return self.beneficio
