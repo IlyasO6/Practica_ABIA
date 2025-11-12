@@ -7,7 +7,7 @@ sys.path.append(str(ROOT.parent))
 
 from _experimento import Experimento
 from problem_exp import GasProblem
-from state_exp import generate_initial_state, generate_initial_state_greedy
+from state_exp2 import generate_initial_state, generate_initial_state_greedy
 
 from Practica_ABIA.problem_parameters import ProblemParameters
 
@@ -23,10 +23,11 @@ initial_state = generate_initial_state_greedy(params=params)
 problem_op1 = GasProblem(initial_state=initial_state, set_operadores=1)
 problem_op2 = GasProblem(initial_state=initial_state, set_operadores=2)
 problem_op3 = GasProblem(initial_state=initial_state, set_operadores=3)
+problem_opx = GasProblem(initial_state=initial_state, set_operadores=0)
 
-Exp.experimento(0, op1 = problem_op1)
+Exp.experimento(0, opx = problem_opx)
 
 for i,j in Exp.cache.items():
-    print(f"{i}: {j}", file=open("experimentos/resultados_1.txt", "a"))
+    print(i, j, file=open("experimentos/resultados_1.txt", "a"))
 
-Exp.get_plt()
+#Exp.get_plt()

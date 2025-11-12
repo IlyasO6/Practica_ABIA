@@ -21,6 +21,7 @@ class Experimento:
 
         times_problem = list()
         values_problem = list()
+        h = list()
         for i in range(self.n):
             print(f"Repeticion {i}")
             time_i = time()
@@ -28,10 +29,11 @@ class Experimento:
             time_f = time()
             
             times_problem.append(time_f - time_i)
-            values_problem.append(node.beneficio - node.distancia*2)
+            values_problem.append((node.beneficio - sum(node.km_camiones), sum(node.km_camiones)))
+            h.append(node.beneficio)
 
         media = sum(times_problem) / len(times_problem)
-        media_heuristica = sum(values_problem) / len(values_problem)
+        media_heuristica = sum(h) / len(h)
         times_problem.insert(0, media)
         values_problem.insert(0, media_heuristica)
 
