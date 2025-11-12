@@ -146,10 +146,10 @@ def generate_one_action1x(estado):
             #  Escollim una petició vàlida aleatoriament
             if operador == 2: # AddMultipleTrip
                 if idx_gasolinera1 == idx_gasolinera2:
-                    peticions = [i for i in gasolineras[idx_gasolinera1] if gasolineras[idx_gasolinera1][i] is None]
+                    peticions = [i for i in range(len(gasolineras[idx_gasolinera1])) if gasolineras[idx_gasolinera1][i] is None]
                     idx_peticio1, idx_peticio2 = random.sample(peticions, k=2)
                 else:
-                    peticions2 = [i for i in gasolineras[idx_gasolinera2] if gasolineras[idx_gasolinera2][i] is None]
+                    peticions2 = [i for i in range(len(gasolineras[idx_gasolinera2])) if gasolineras[idx_gasolinera2][i] is None]
                     idx_peticio2 = random.choice(peticions2)
             else:
                 peticions1 = [i for i in range(len(gasolineras[idx_gasolinera1])) if gasolineras[idx_gasolinera1][i] is None]
@@ -165,7 +165,7 @@ def generate_one_action1x(estado):
                 distancia = estado._dist_c_g(idx_camio, idx_gasolinera1)
                 km = distancia*2
                 if operador == 2:
-                    km = distancia + estado._dist_c_g(idx_gasolinera1, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)
+                    km = distancia + estado._dist_g_g(idx_gasolinera1, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)
                 #  Si no li queden prous km seguim buscant
                 if estado.km_camiones[idx_camio]+km >= MAX_KM:
                     camions.remove(idx_camio)
