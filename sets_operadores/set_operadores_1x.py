@@ -151,9 +151,9 @@ def generate_one_action1x(estado):
                 else:
                     peticions2 = [i for i in range(len(gasolineras[idx_gasolinera2])) if gasolineras[idx_gasolinera2][i] is None]
                     idx_peticio2 = random.choice(peticions2)
-            else:
-                peticions1 = [i for i in range(len(gasolineras[idx_gasolinera1])) if gasolineras[idx_gasolinera1][i] is None]
-                idx_peticio1 = random.choice(peticions1)
+
+            peticions1 = [i for i in range(len(gasolineras[idx_gasolinera1])) if gasolineras[idx_gasolinera1][i] is None]
+            idx_peticio1 = random.choice(peticions1)
             
             #  Escollim camió
             camions = [idx_camio for idx_camio in range(len(camiones)) if len(camiones[idx_camio]) < 2*MAX_VIAJES]  #  camions que no estiguin complets de viatges
