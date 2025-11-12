@@ -1,6 +1,6 @@
 from timeit import timeit
 from time import time
-from aima.search import Problem, hill_climbing, simulated_annealing
+from aima.search import Problem, hill_climbing, simulated_annealing, exp_schedule
 
 import matplotlib
 matplotlib.use('agg')
@@ -35,21 +35,30 @@ class Experimento:
 
         return times_problem, values_problem
 
-    def experimento_sa(self, problem, schedule:tuple):
-        print("Hill climbing")
+    def experimento_sa(self, problem, schedule_params:tuple):
+        print("Simulated Annealing")
         times_problem = list()
         values_problem = list()
         h = list()
-        k, lam, limit = schedule
+        if schedule_params is not None:
+            k, lam, limit = schedule_params
+        else:
+            k, lam, limit = (20, 0.005, 100)
         for i in range(self.n):
             print(f"Repeticion {i}")
             time_i = time()
-            node = simulated_annealing(problem, schedule = exp_s)
+            node = simulated_annealing(problem, schedule = exp_schedule(k, lam, limit))
             time_f = time()
             times_problem.append(time_f - time_i)
             values_problem.append((node.beneficio, node.distancia))
             h.append(node.beneficio)
+        
+        media = sum(times_problem) / len(times_problem)
+        media_heuristica = sum(h) / len(h)
+        times_problem.insert(0, media)
+        values_problem.insert(0, media_heuristica)
 
+        return times_problem, values_problem
 
     def experimento(self, algoritmo:int=1, schedule_params:tuple=None,**versiones):
         """ 
@@ -58,13 +67,13 @@ class Experimento:
         """
         nombres = list(versiones.keys())
         problems = list(versiones.values())
-        if algoritmo == 1:
-            exp = self.experimento_hc
-        else:
-            exp = self.experimento_sa
         for i in range(len(problems)):
             print(f"---Problem {nombres[i]}---")
-            resultado = exp(algoritmo = algoritmo, problem = problems[i])
+            if algoritmo == 1:
+                resultado = self.experimento_hc(problem = problems[i])
+            else:
+                resultado = self.experimento_sa(problem= problems[i], schedule_params=schedule_params)
+
             self.cache[i] = (nombres[i], resultado)
         
         return self.cache

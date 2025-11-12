@@ -73,7 +73,7 @@ class RemoveTrip(GasOperators):
 def generate_actions1x(estado):
     MAX_VIAJES = 5
     MAX_KM = 640
-    camiones = estado._copy_camiones()
+    camiones = estado.camiones
     gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
     for idx_gasolinera, gasolinera in enumerate(gasolineras):
         for idx_peticio in range(len(gasolinera)):
@@ -117,7 +117,7 @@ def generate_one_action1x(estado):
 
     MAX_VIAJES = 5
     MAX_KM = 640
-    camiones = estado._copy_camiones()
+    camiones = estado.camiones
     gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
     
     operador = random.choice([1,2,3])  #  1: AddOnlyTrip, 2:AddMultipleTrip, 3:RemoveTrip
@@ -191,7 +191,7 @@ def generate_one_action1x(estado):
 
 #_______________________________________________________________________________________________________________
 #  Apply Action
-def apply_action_1(estado, action: GasOperators):
+def apply_action1x(estado, action: GasOperators):
     new_state = estado.copy()
     delta_perdida = 0
     delta_beneficio = 0
