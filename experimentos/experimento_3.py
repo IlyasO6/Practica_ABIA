@@ -18,9 +18,9 @@ params = ProblemParameters(n_distribution_centers= 10,
                            n_gas_stations= 100,
                            multiplicitat= 1)
 
-initial_state_x = generate_initial_state_greedy(params=params)
+initial_state = generate_initial_state_greedy(params=params)
 
-problem_opx = GasProblem(initial_state=initial_state_x, set_operadores=0, algoritmo=2)
+problem_opx = GasProblem(initial_state=initial_state, set_operadores=0, algoritmo=2)
 
 Exp.experimento(algoritmo=2, opx = problem_opx)
 
