@@ -13,20 +13,15 @@ class Experimento:
 
         self.cache = dict()
     
-    def _experimento(self, algoritmo, problem):
-        if algoritmo == 1:
-            func = hill_climbing
-        else:
-            print("SA")
-            func = simulated_annealing
-
+    def experimento_hc(self, problem):
+        print("Hill climbing")
         times_problem = list()
         values_problem = list()
         h = list()
         for i in range(self.n):
             print(f"Repeticion {i}")
             time_i = time()
-            node = func(problem)
+            node = hill_climbing(problem)
             time_f = time()
             
             times_problem.append(time_f - time_i)
@@ -40,16 +35,36 @@ class Experimento:
 
         return times_problem, values_problem
 
-    def experimento(self, algoritmo:int, **versiones):
+    def experimento_sa(self, problem, schedule:tuple):
+        print("Hill climbing")
+        times_problem = list()
+        values_problem = list()
+        h = list()
+        k, lam, limit = schedule
+        for i in range(self.n):
+            print(f"Repeticion {i}")
+            time_i = time()
+            node = simulated_annealing(problem, schedule = exp_s)
+            time_f = time()
+            times_problem.append(time_f - time_i)
+            values_problem.append((node.beneficio, node.distancia))
+            h.append(node.beneficio)
+
+
+    def experimento(self, algoritmo:int=1, schedule_params:tuple=None,**versiones):
         """ 
         Algoritmo = 0 --> hill climbing
         Algoritmo = 1 --> simulated annealing
         """
         nombres = list(versiones.keys())
         problems = list(versiones.values())
+        if algoritmo == 1:
+            exp = self.experimento_hc
+        else:
+            exp = self.experimento_sa
         for i in range(len(problems)):
             print(f"---Problem {nombres[i]}---")
-            resultado = self._experimento(algoritmo = algoritmo, problem = problems[i])
+            resultado = exp(algoritmo = algoritmo, problem = problems[i])
             self.cache[i] = (nombres[i], resultado)
         
         return self.cache
