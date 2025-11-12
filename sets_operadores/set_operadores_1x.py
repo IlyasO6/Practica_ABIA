@@ -113,69 +113,81 @@ def generate_actions1x(estado):
 #_______________________________________________________________________________________________________________
 #  Generate One Action
 def generate_one_action1x(estado):
-    random_value = random.random()
-    operador = 0
-    if random_value < (1/3):
-        operador = 1
-    elif random_value < (2/3):
-        operador = 2
-    
+    #  Escollim un operador a l'atzar
+
     MAX_VIAJES = 5
     MAX_KM = 640
-
-    gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
-    for idx_gasolinera, gasolinera in enumerate(gasolineras):
-        validas = [idx_gasolinera for i in gasolinera if i is None] #  Afegim les gasolineres per cada petició buida que tenen
-        random_value = random.random()
-        idx_gasolinera1 = validas.pop(random_value*len(validas))
-        random_value = random.random()
-        idx_gasolinera2 = validas.pop(random_value*len(validas))
-
-
-        for gasolinera in gasolineras:
-            for peticion in gasolinera:
-
-    if operador == 1: # AddOnlyTrip
-    elif operador == 2: # AddMultipleTrip
-    
-    else: # RemoveTrip
-
     camiones = estado._copy_camiones()
     gasolineras = [list(gasolinera) for gasolinera in estado.current_state]
-    for idx_gasolinera, gasolinera in enumerate(gasolineras):
-        for idx_peticio in range(len(gasolinera)):
-            if gasolinera[idx_peticio] is None:
-                for idx_gasolinera2, gasolinera2 in enumerate(gasolineras):
-                    for idx_peticio2 in range(len(gasolinera2)):
-                        if gasolinera2[idx_peticio2] is None and (idx_gasolinera != idx_gasolinera2 or idx_peticio != idx_peticio2):
-                            for idx_camio, camio in enumerate(camiones):
-                                distancia = estado._dist_c_g(idx_camio, idx_gasolinera)
-                                km = distancia*2
-                                km2 = distancia + estado._dist_c_g(idx_gasolinera, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)                            
-                                if estado.km_camiones[idx_camio]+km2 < MAX_KM and len(camio) < 2 * MAX_VIAJES:
-#  AddOnlyTrip                                
-                                    yield AddOnlyTrip(km, idx_gasolinera, idx_peticio, idx_camio)
-# AddMultipleTrip 
-                                    yield AddMultipleTrip(km2, idx_gasolinera, idx_gasolinera2, idx_peticio, idx_peticio2, idx_camio)                          
-                                elif estado.km_camiones[idx_camio]+km < MAX_KM and len(camio) < 2 * MAX_VIAJES:
-                                    yield AddOnlyTrip(km, idx_gasolinera, idx_peticio, idx_camio)                           
-# RemoveTrip
-                                if len(camio) > 0: # mirem si el camio té algun viatge
-                                    for idx_tupla in range(0, len(camio), 2): # Vamos de 2 en 2 pues cada viaje esta formado por 2 tuplas y con estos operadores la primera siempre será not None
-                                        tupla = camio[idx_tupla]
-                                        tupla2 = camio[idx_tupla+1] if camio[idx_tupla+1] is not None else None
-                                        idx_g = tupla[0] #  Posem idx_g per referir-nos a l'índex de la benzinera per no reescriure idx_gasolinera, no volem possibles bugs (no crec que passi res però per si de cas)
-                                        idx_p = tupla[1] #  Igual que amb la benzinera
-                                        distancia = estado._dist_c_g(idx_camio, idx_g)
-                                        km = distancia*2
-                                        if tupla2 is not None:
-                                            idx_g2 = tupla2[0]
-                                            idx_p2 = tupla2[1]
-                                            km2 = distancia + estado._dist_c_g(idx_g, idx_g2) + estado._dist_c_g(idx_camio, idx_g2)
-                                        else:
-                                            idx_g2 = None
-                                            idx_p2 = None
-                                            yield RemoveTrip(km, idx_camio, idx_tupla, idx_g, idx_p, idx_g2, idx_p2)
+    
+    operador = random.choice([1,2,3])  #  1: AddOnlyTrip, 2:AddMultipleTrip, 3:RemoveTrip
+
+    if operador == 3:  # Si cap camió té cap viatje cambiem d'operador
+        operador = random.choice([1,2])
+        for camio in camiones:
+            if len(camio) > 0:
+                operador = 3
+                break
+
+    if operador <3:  # AddOnlyTrip i AddMultipleTrip
+        validas = []
+        for idx_gasolinera, gasolinera in enumerate(gasolineras):
+            validas.extend(idx_gasolinera for i in gasolinera if i is None) #  Afegim les gasolineres per cada petició buida que tenen    
+        #  Mirem si queden prous peticions a resoldre, sinó cambiem a un operador que puguem fer servir
+        if len(validas) >= 2:
+            idx_gasolinera1, idx_gasolinera2 = random.sample(validas, k=2)
+        elif len(validas) == 1:
+            idx_gasolinera1 = validas[0]
+            operador = 1  # AddOnlyTrip
+        else:
+            operador = 3
+
+        if operador <3: # AddOnlyTrip i AddMultipleTrip, per si s'ha hagut de cambiar a l'operador remove
+            #  Escollim una petició vàlida aleatoriament
+            if operador == 2: # AddMultipleTrip
+                if idx_gasolinera1 == idx_gasolinera2:
+                    peticions = [i for i in gasolineras[idx_gasolinera1] if gasolineras[idx_gasolinera1][i] is None]
+                    idx_peticio1, idx_peticio2 = random.sample(peticions, k=2)
+                else:
+                    peticions2 = [i for i in gasolineras[idx_gasolinera2] if gasolineras[idx_gasolinera2][i] is None]
+                    idx_peticio2 = random.choice(peticions2)
+            else:
+                peticions1 = [i for i in range(len(gasolineras[idx_gasolinera1])) if gasolineras[idx_gasolinera1][i] is None]
+                idx_peticio1 = random.choice(peticions1)
+            
+            #  Escollim camió
+            camions = [idx_camio for idx_camio in range(len(camiones)) if len(camiones[idx_camio]) < 2*MAX_VIAJES]  #  camions que no estiguin complets de viatges
+            idx_camio = None
+            while idx_camio is None and camions:
+                #  Obtenim camió
+                idx_camio = random.choice(camions)
+                #  Veiem si li queden prous km
+                distancia = estado._dist_c_g(idx_camio, idx_gasolinera1)
+                km = distancia*2
+                if operador == 2:
+                    km = distancia + estado._dist_c_g(idx_gasolinera1, idx_gasolinera2) + estado._dist_c_g(idx_camio, idx_gasolinera2)
+                #  Si no li queden prous km seguim buscant
+                if estado.km_camiones[idx_camio]+km >= MAX_KM:
+                    camions.remove(idx_camio)
+                    idx_camio = None
+            #  Mirem si s'ha obtingut un camió, si no, oferim Remove com a operador
+            if idx_camio is None:
+                operador = 3
+            else:
+                if operador == 1: # AddOnlyTrip
+                    yield AddOnlyTrip(km, idx_gasolinera1, idx_peticio1, idx_camio)
+                if operador == 2: # AddMultipleTrip
+                    yield AddMultipleTrip(km, idx_gasolinera1, idx_gasolinera2, idx_peticio1, idx_peticio2, idx_camio) 
+        
+    if operador == 3: # RemoveTrip
+        camions = [idx_camio for idx_camio in range(len(camiones)) if len(camiones[idx_camio]) > 1]
+        idx_camio = random.choice(camions)
+        idx_tupla = random.randrange(0, len(camiones[idx_camio]) - 1, 2)
+        idx_g = camiones[idx_camio][idx_tupla][0]
+        idx_p = camiones[idx_camio][idx_tupla][1]
+        idx_g2 = camiones[idx_camio][idx_tupla+1][0]
+        idx_p2 = camiones[idx_camio][idx_tupla+1][1]
+        yield RemoveTrip(km, idx_camio, idx_tupla, idx_g, idx_p, idx_g2, idx_p2)
 
 #_______________________________________________________________________________________________________________
 #  Apply Action
