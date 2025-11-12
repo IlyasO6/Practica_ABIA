@@ -9,7 +9,7 @@ from Practica_ABIA.sets_operadores.set_operadores_3 import generate_actions_3, a
 from Practica_ABIA.sets_operadores.set_operadores_x import generate_actionsx, apply_actionx
 class GasProblem(Problem):
     def __init__(self, initial_state, set_operadores):
-
+        self.set_operadores = set_operadores
         if set_operadores == 1:
             self.generate = generate_actions_1
             self.apply = apply_action_1
@@ -33,17 +33,18 @@ class GasProblem(Problem):
         return self.apply(state, action)
 
     def value(self, state) -> float:
-        beneficio = state.heuristic()
-        distancia = sum(state.km_camiones)*2
+        distancia = state.distancia * 2
+        beneficio = state.beneficio
+        
         no_satisfechas = state.perdida_no_asignadas
-        alpha = 2
+        alpha = 1
         beta = 1
         gamma = 0.5
 
         #h = beneficio
         h = alpha*beneficio - distancia*beta - no_satisfechas*gamma
         #h = alpha*beneficio / (abs(no_satisfechas)*beta + abs(distancia)*gamma)
-        print(h)
+        #print(h)
         return h
         #  buscamos maximizar entonces el heurístico es (-) y el path cost (+)
         #  ambos se retornan como (-) desde state

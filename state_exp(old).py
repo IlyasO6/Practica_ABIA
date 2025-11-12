@@ -17,14 +17,14 @@ class StateRepresentation(object):
 
     def __init__(self, 
                  asignaciones: List[List[int],],
-                 camiones:list[list[Tuple,],],
-                 km_camiones:list,
+                 camiones:list[list[int, Tuple,],],
                  beneficio:float, 
+                 distancia:float,
                  perdida_no_asignadas:float):    
         self.current_state = asignaciones
         self.camiones = camiones
-        self.km_camiones = km_camiones
         self.beneficio = beneficio
+        self.distancia = distancia
         self.perdida_no_asignadas = perdida_no_asignadas
         self.perdida = 0
 
@@ -41,9 +41,9 @@ class StateRepresentation(object):
 
         return StateRepresentation(
             asignaciones= [list(gasolinera) for gasolinera in self.current_state],
-            camiones= [camion.copy() for camion in self.camiones],
-            km_camiones= self.km_camiones.copy(),
+            camiones= self._copy_camiones(),
             beneficio= self.beneficio,
+            distancia= self.distancia,
             perdida_no_asignadas= self.perdida_no_asignadas
         )
 
@@ -66,7 +66,7 @@ class StateRepresentation(object):
                 msg.append(f"\nPeticion {j}: {servicio}")
             
             msg.append("\n\n")
-        msg.append(f"\n\nCamiones:\n {self.camiones} \n\nBeneficio total: {self.beneficio}. \nDistancia total: {sum(self.km_camiones)}")
+        msg.append(f"\n\nCamiones:\n {self.camiones} \n\nBeneficio total: {self.beneficio - self.perdida}")
         msg.insert(0, "ASIGNACION FINAL:\n")
         return "".join(msg)
         
@@ -123,26 +123,18 @@ class StateRepresentation(object):
     def _dist_g_g(self, g1: int, g2: int) -> int:
         return self.dists_gasolineras[g1][g2]
 
-    def _distancia_ruta(self, camion_id: int, ruta: List[Tuple[int, int]]) -> int:
-        distancia = 0
-        if ruta and any(ruta):
-            for idx_posicion in range(len(ruta)):
-                
-                peticion = ruta[idx_posicion]
-                if peticion is None and ruta[idx_posicion - 1] is None:
-                    continue
-                elif peticion is None:
-                    g = ruta[idx_posicion - 1][0]
-                    distancia += self._dist_c_g(camion_id, g)
-                elif idx_posicion % 2 != 0 and ruta[idx_posicion - 1] is not None:
-                    g_anterior = ruta[idx_posicion - 1][0]
-                    g = peticion[0]
-                    distancia += self._dist_g_g(g_anterior, g)
-                else:
-                    g = peticion[0]
-                
-                distancia += self._dist_c_g(camion_id, g)
-        return distancia        
+    def _distancia_viaje(self, camion_id: int, viaje: List[Tuple[int, int]]) -> int:
+        if not viaje:
+            return 0
+        g1 = viaje[0][0]
+        if len(viaje) == 1:
+            return 2 * self._dist_c_g(camion_id, g1)
+        g2 = viaje[1][0]
+        return self._dist_c_g(camion_id, g1) + self._dist_g_g(g1, g2) + self._dist_c_g(camion_id, g2)
+
+    def path_cost(self):
+        return self.perdida_no_asignadas , self.distancia*2
+            
 
     def heuristic(self):
         return self.beneficio
@@ -168,8 +160,8 @@ def generate_initial_state(params):
     centros_coords = [(centro.cx, centro.cy) for centro in 
         CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros]
     
-    camions = [[None] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
-    km_camiones = [0 for _ in centros_coords]
+    camions = [[0] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
+
     StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
 
     perdida_total = 0
@@ -181,8 +173,8 @@ def generate_initial_state(params):
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camions,
-        km_camiones=km_camiones, 
         beneficio=0,
+        distancia=0, 
         perdida_no_asignadas=perdida_total
     )
 
@@ -215,8 +207,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
         cluster_asignado = distancias.index(min(distancias))
         clusters.append(cluster_asignado)
     
-    camiones = [[] for _ in centros_coords]
-    km_camiones = [0 for _ in centros_coords]
+    camiones = [[0] for _ in centros_coords]
+
     distancia_total = 0
     beneficio_total = 0
     for id_camion in range(len(centros_coords)):
@@ -269,8 +261,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
                                                                 gasolinera2= None if len(viaje) < 2 else viaje[1][0])
             
             if km + km_viaje <= 640:
-                camiones[id_camion].extend(viaje)
-                km_camiones[id_camion] += km_viaje
+                camiones[id_camion].append(viaje)
+                camiones[id_camion][0] += km_viaje
                 km += km_viaje
                 distancia_total += km_viaje
                 beneficio_total += beneficio1
@@ -294,8 +286,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,
-        km_camiones=km_camiones,
         beneficio=beneficio_total,
+        distancia=distancia_total,
         perdida_no_asignadas= perdida_total
     )
 
