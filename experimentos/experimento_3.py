@@ -22,7 +22,7 @@ initial_state = generate_initial_state_greedy(params=params)
 
 problem_opx = GasProblem(initial_state=initial_state, set_operadores=0, algoritmo=2)
 
-Exp.experimento(algoritmo=2, opx = problem_opx)
+Exp.experimento(algoritmo=2, schedule_params= (40, 0.0001, 10000), opx = problem_opx)
 
 for i,j in Exp.cache.items():
     print(i, j, file=open("experimentos/resultados_1.txt", "a"))

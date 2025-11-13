@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 from Practica_ABIA.abia_Gasolina import *
 
 
-class StateRepresentation2(object):
+class StateRepresentation(object):
     
     MAX_KM = 640
     MAX_VIAJES = 5
@@ -21,23 +21,25 @@ class StateRepresentation2(object):
                  km_camiones:list,
                  beneficio:float, 
                  distancia_total:float,
-                 perdida_no_asignadas:float):    
+                 perdida_no_asignadas:float,
+                 pasos:int=0):    
         self.current_state = asignaciones
         self.camiones = camiones
         self.km_camiones = km_camiones
         self.beneficio = beneficio
         self.distancia = distancia_total
         self.perdida_no_asignadas = perdida_no_asignadas
-        self.perdida = 0    
+        self.pasos = pasos
     
     def copy(self):
-        return StateRepresentation2(
+        return StateRepresentation(
             asignaciones= [list(gasolinera) for gasolinera in self.current_state],
             camiones= [camion.copy() for camion in self.camiones],
             km_camiones= self.km_camiones.copy(),
             beneficio= self.beneficio,
             distancia_total=self.distancia,
-            perdida_no_asignadas= self.perdida_no_asignadas
+            perdida_no_asignadas= self.perdida_no_asignadas,
+            pasos = self.pasos
         )
 
     def __repr__(self) -> str:
@@ -98,25 +100,16 @@ class StateRepresentation2(object):
 
         cls.beneficio_peticiones = llista_benefici
         cls.lista_peticiones = peticiones
+    
+    @classmethod
+    def _dist_c_g(cls, camion_id: int, gas_id: int) -> int:
+        return cls.dists[gas_id][camion_id]
+    @classmethod
+    def _dist_g_g(cls, g1: int, g2: int) -> int:
+        return cls.dists_gasolineras[g1][g2]
 
     @classmethod
-    def calcular_distancia(cls, centro, gasolinera1, gasolinera2=None):
-        distancia = 0
-        distancia += cls.dists[gasolinera1][centro]
-        if gasolinera2 is not None:
-            distancia += cls.dists_gasolineras[gasolinera1][gasolinera2]
-            distancia += cls.dists[gasolinera2][centro]
-        else:
-            distancia += cls.dists[gasolinera1][centro]
-        return distancia
-    
-    def _dist_c_g(self, camion_id: int, gas_id: int) -> int:
-        return self.dists[gas_id][camion_id]
-
-    def _dist_g_g(self, g1: int, g2: int) -> int:
-        return self.dists_gasolineras[g1][g2]
-
-    def _distancia_ruta(self, camion_id: int, ruta: List[Tuple[int, int]]) -> int:
+    def _distancia_ruta(cls, camion_id: int, ruta: List[Tuple[int, int]]) -> int:
         distancia = 0
         if ruta and any(ruta):
             n = len(ruta)
@@ -131,13 +124,13 @@ class StateRepresentation2(object):
                     g1 = p1[0]
                     g2 = p2[0]
                     distancia += (
-                        self._dist_c_g(camion_id, g1) +
-                        self._dist_g_g(g1, g2) +
-                        self._dist_c_g(camion_id, g2)
+                        cls._dist_c_g(camion_id, g1) +
+                        cls._dist_g_g(g1, g2) +
+                        cls._dist_c_g(camion_id, g2)
                     )
                 else:
                     g = (p1 or p2)[0]
-                    distancia += 2 * self._dist_c_g(camion_id, g)
+                    distancia += 2 * cls._dist_c_g(camion_id, g)
         return distancia
 
 #  state --> lista(lista(), lista())
@@ -163,21 +156,21 @@ def generate_initial_state(params):
     
     camions = [[] for _ in centros_coords]  #  Los índices de las camions coinciden con los de la lista de CentrosDistribucion
     km_camiones = [0 for _ in centros_coords]
-    StateRepresentation2.preprocessament(gasolineras_coords, centros_coords, peticiones)
+    StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
 
     perdida_total = 0
     for gas in range(len(gas_stations)):
         for pet in (range(len(gas_stations[gas]))):
-            beneficio_hoy, beneficio_sig = StateRepresentation2.beneficio_peticiones[gas][pet]
+            beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
             perdida_total += beneficio_hoy - beneficio_sig
 
-    return StateRepresentation2(
+    return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camions,
         km_camiones=km_camiones, 
         beneficio=0,
         distancia_total=0,
-        perdida_no_asignadas=perdida_total
+        perdida_no_asignadas=perdida_total,
     )
 
 
@@ -197,14 +190,14 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
     gasolineras_coords = [(gasolinera.cx, gasolinera.cy) for gasolinera in gasolineras]
     centros_coords = [(centro.cx, centro.cy) for centro in 
     CentrosDistribucion(num_centros=n_centers, multiplicidad=multiplicitat, seed=seed).centros]
-    StateRepresentation2.preprocessament(gasolineras_coords, centros_coords, peticiones)
+    StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
 
     clusters = []
 
     for gas in range(len(gasolineras_coords)):
         distancias = []
         for centro in range(len(centros_coords)):
-            dist = StateRepresentation2.dists[gas][centro]
+            dist = StateRepresentation.dists[gas][centro]
             distancias.append(dist)
         cluster_asignado = distancias.index(min(distancias))
         clusters.append(cluster_asignado)
@@ -248,7 +241,7 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
 
             for pet in peticiones_cluster:
                 if (pet[1], pet[2]) not in peticiones_asignadas and pet[1] != gas1:
-                    dist = StateRepresentation2.dists_gasolineras[gas1][pet[1]]
+                    dist = StateRepresentation.dists_gasolineras[gas1][pet[1]]
 
                     if dist < min_dist:
                         min_dist = dist
@@ -257,10 +250,11 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
             if gas2 is not None:
                 viaje = [(gas1, pet1), (gas2, pet2)]
             else:
-                viaje = [(gas1, pet1)]
-            km_viaje = StateRepresentation2.calcular_distancia(centro = id_camion, 
-                                                                gasolinera1= viaje[0][0], 
-                                                                gasolinera2= None if len(viaje) < 2 else viaje[1][0])
+                viaje = [(gas1, pet1), None]
+            copia_camion = camiones[id_camion].copy()
+            copia_camion.extend(viaje)
+            km_viaje = StateRepresentation._distancia_ruta(camion_id=id_camion,
+                                                           ruta=copia_camion)
             
             if km + km_viaje <= 640:
                 camiones[id_camion].extend(viaje)
@@ -282,10 +276,10 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
     for gas in range(len(gas_stations)):
         for pet in (range(len(gas_stations[gas]))):
             if gas_stations[gas][pet] == None:
-                beneficio_hoy, beneficio_sig = StateRepresentation2.beneficio_peticiones[gas][pet]
+                beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
                 perdida_total += beneficio_hoy - beneficio_sig
     print(beneficio_total, perdida_total, distancia_total)
-    return StateRepresentation2(
+    return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,
         km_camiones=km_camiones,

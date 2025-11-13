@@ -1,95 +1,276 @@
-from timeit import timeit
 from time import time
-from aima.search import Problem, hill_climbing, simulated_annealing, exp_schedule
+from typing import Dict, Iterable, List, Optional, Tuple, Union
+import os
+import json
+import random
+
+from aima.search import hill_climbing, simulated_annealing, exp_schedule
 
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Experimento:
-    def __init__(self, numero_repeticiones=10):
-        self.n = numero_repeticiones
+    def __init__(self, numero_repeticiones: int = 10, out_dir: str = "resultados", seed: Optional[int] = None):
+        self.n = int(numero_repeticiones)
+        self.cache = dict()  # idx -> (variant_name, (times_list, values_list_of_tuples))
+        self.rows = []       # long-form rows for CSV
+        self.out_dir = out_dir
+        os.makedirs(self.out_dir, exist_ok=True)
+        self.global_seed = seed
+        if seed is not None:
+            random.seed(seed)
+            np.random.seed(seed)
 
-        self.cache = dict()
-    
-    def experimento_hc(self, problem):
-        print("Hill climbing")
-        times_problem = list()
-        values_problem = list()
-        h = list()
+    # ---------- Low-level runners ----------
+
+    def experimento_hc(self, problem, label: str) -> Tuple[List[float], List[Tuple[float, float]]]:
+        times_problem: List[float] = []
+        vals_problem: List[Tuple[float, float]] = []
         for i in range(self.n):
             print(f"Repeticion {i}")
-            time_i = time()
-            node = hill_climbing(problem)
-            time_f = time()
-            
-            times_problem.append(time_f - time_i)
-            values_problem.append((node.beneficio, node.distancia))
-            h.append(node.beneficio)
+            t0 = time()
+            state = hill_climbing(problem)
+            t1 = time()
+            times_problem.append(t1 - t0)
+            vals_problem.append((state.beneficio, state.distancia))
+            # Store row for CSV
+            self.rows.append({
+                "variant": label,
+                "algorithm": "HC",
+                "run": i,
+                "beneficio": float(state.beneficio),
+                "distancia": float(state.distancia),
+                "pasos": state.pasos,
+                "time_sec": round(t1 - t0, 4),
+                "schedule_k": None,
+                "schedule_lambda": None,
+                "schedule_limit": None,
+                "seed": self.global_seed
+            })
+        return times_problem, vals_problem
 
-        media = sum(times_problem) / len(times_problem)
-        media_heuristica = sum(h) / len(h)
-        times_problem.insert(0, media)
-        values_problem.insert(0, media_heuristica)
-
-        return times_problem, values_problem
-
-    def experimento_sa(self, problem, schedule_params:tuple):
-        print("Simulated Annealing")
-        times_problem = list()
-        values_problem = list()
-        h = list()
+    def experimento_sa(self, problem, label: str, schedule_params: Optional[Tuple[float, float, int]]) -> Tuple[List[float], List[Tuple[float, float]]]:
         if schedule_params is not None:
             k, lam, limit = schedule_params
         else:
             k, lam, limit = (20, 0.005, 100)
+        schedule = exp_schedule(k, lam, limit)
+
+        times_problem: List[float] = []
+        vals_problem: List[Tuple[float, float]] = []
         for i in range(self.n):
-            print(f"Repeticion {i}")
-            time_i = time()
-            node = simulated_annealing(problem, schedule = exp_schedule(k, lam, limit))
-            time_f = time()
-            times_problem.append(time_f - time_i)
-            values_problem.append((node.beneficio, node.distancia))
-            h.append(node.beneficio)
-        
-        media = sum(times_problem) / len(times_problem)
-        media_heuristica = sum(h) / len(h)
-        times_problem.insert(0, media)
-        values_problem.insert(0, media_heuristica)
+            t0 = time()
+            state = simulated_annealing(problem, schedule=schedule)
+            t1 = time()
+            times_problem.append(t1 - t0)
+            vals_problem.append((state.beneficio, state.distancia))
+            # Store row for CSV
+            self.rows.append({
+                "variant": label,
+                "algorithm": "SA",
+                "run": i,
+                "beneficio": float(state.beneficio),
+                "distancia": float(state.distancia),
+                "pasos": state.pasos,
+                "time_sec": round(float(t1 - t0, 4)),
+                "schedule_k": float(k),
+                "schedule_lambda": float(lam),
+                "schedule_limit": int(limit),
+                "seed": self.global_seed
+            })
+        return times_problem, vals_problem
 
-        return times_problem, values_problem
+    # ---------- Batch runner ----------
 
-    def experimento(self, algoritmo:int=1, schedule_params:tuple=None,**versiones):
-        """ 
-        Algoritmo = 0 --> hill climbing
-        Algoritmo = 1 --> simulated annealing
+    def experimento(self, algoritmo: int = 0, schedule_params: Optional[Tuple[float, float, int]] = None, **versiones):
         """
-        nombres = list(versiones.keys())
-        problems = list(versiones.values())
-        for i in range(len(problems)):
-            print(f"---Problem {nombres[i]}---")
-            if algoritmo == 1:
-                resultado = self.experimento_hc(problem = problems[i])
-            else:
-                resultado = self.experimento_sa(problem= problems[i], schedule_params=schedule_params)
+        algoritmo: 0 -> hill climbing (HC), 1 -> simulated annealing (SA)
+        versiones: pass as named arguments: nombre_variant=problem_instance
+        Returns: self.cache: idx -> (name, (times_list, values_list))
+        """
+        # Clear in case of reuse
+        self.cache.clear()
 
-            self.cache[i] = (nombres[i], resultado)
-        
+        names = list(versiones.keys())
+        problems = list(versiones.values())
+
+        for i, problem in enumerate(problems):
+            label = names[i]
+            print(f"--- Running variant: {label} ---")
+            if algoritmo == 0:
+                times, values = self.experimento_hc(problem, label)
+            elif algoritmo == 1:
+                times, values = self.experimento_sa(problem, label, schedule_params=schedule_params)
+            else:
+                raise ValueError("algoritmo must be 0 (HC) or 1 (SA)")
+            self.cache[i] = (label, (times, values))
         return self.cache
 
+    
+    def to_table(self) -> List[dict]:
+        """
+        Returns a long-form list of rows. Each row has:
+        variant, algorithm, run, beneficio, distancia, time_sec, schedule_k, schedule_lambda, schedule_limit, seed
+        """
+        return list(self.rows)
 
-    def get_plt(self, name:str='resultat'):
-        heuristics_to_plot = list()
-        times_to_plot = list()
-        labels = list()
-        for _, value in self.cache.items():
-            labels.append(value[0])
-            times_to_plot.append(value[1][0][1:])
-            heuristics_to_plot.append(value[1][1][1:])
+    def save_csv(self, filename: str = "resultados.csv") -> str:
+        """
+        Saves a CSV to out_dir. Returns full path.
+        """
+        import csv
+        path = os.path.join(self.out_dir, filename)
+        fieldnames = ["variant", "algorithm", "run", "beneficio", "distancia", "time_sec",
+                    "schedule_k", "schedule_lambda", "schedule_limit", "seed"]
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in self.rows:
+                writer.writerow(row)
+        return path
 
-        plt.boxplot(heuristics_to_plot, tick_labels=labels)
-        plt.ylabel("Valor heurístic (benefici)")
-        plt.title("Comparativa d'operadors amb Boxplots")
-        name += 'png'
-        plt.savefig(name)
+    def save_json_summary(self, filename: str = "resumen.json") -> str:
+        """
+        Saves a per-variant, per-algorithm summary (mean, std, min, max) for beneficio, distancia, time.
+        """
+        summary = self.compute_summary()
+        path = os.path.join(self.out_dir, filename)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(summary, f, ensure_ascii=False, indent=2)
+        return path
+
+    def compute_summary(self) -> Dict[str, Dict[str, dict]]:
+        """
+        Returns nested dict: summary[variant][algorithm] -> metrics
+        metrics include:
+        n, beneficio_{mean, std, min, max, median}, distancia_{...}, time_sec_{...}
+        """
+        out: Dict[str, Dict[str, dict]] = {}
+        # Build by variant and algorithm
+        by_key: Dict[Tuple[str, str], List[dict]] = {}
+        for r in self.rows:
+            key = (r["variant"], r["algorithm"])
+            by_key.setdefault(key, []).append(r)
+        for (variant, algo), rows in by_key.items():
+            ben = np.array([r["beneficio"] for r in rows], dtype=float)
+            dis = np.array([r["distancia"] for r in rows], dtype=float)
+            tms = np.array([r["time_sec"] for r in rows], dtype=float)
+            stats = {
+                "n": len(rows),
+                "beneficio_mean": float(ben.mean()),
+                "beneficio_std": float(ben.std(ddof=1)) if len(ben) > 1 else 0.0,
+                "beneficio_min": float(ben.min()),
+                "beneficio_max": float(ben.max()),
+                "beneficio_median": float(np.median(ben)),
+                "distancia_mean": float(dis.mean()),
+                "distancia_std": float(dis.std(ddof=1)) if len(dis) > 1 else 0.0,
+                "distancia_min": float(dis.min()),
+                "distancia_max": float(dis.max()),
+                "distancia_median": float(np.median(dis)),
+                "time_sec_mean": float(tms.mean()),
+                "time_sec_std": float(tms.std(ddof=1)) if len(tms) > 1 else 0.0,
+                "time_sec_min": float(tms.min()),
+                "time_sec_max": float(tms.max()),
+                "time_sec_median": float(np.median(tms)),
+            }
+            out.setdefault(variant, {})[algo] = stats
+        return out
+    
+
+    def _extract_by_variant(self) -> Dict[str, dict]:
+        """
+        Helper to group rows by (variant, algorithm) and return metric arrays.
+        """
+        by = {}
+        for r in self.rows:
+            key = (r["variant"], r["algorithm"])
+            d = by.setdefault(key, {"beneficio": [], "distancia": [], "time_sec": []})
+            d["beneficio"].append(r["beneficio"])
+            d["distancia"].append(r["distancia"])
+            d["time_sec"].append(r["time_sec"])
+        return by
+
+    def plot_box(self, metric: str = "beneficio", title: Optional[str] = None, filename: Optional[str] = None):
+        """
+        Boxplot per variant (and algorithm). Metric in {'beneficio','distancia','time_sec'}.
+        Labels are shown as 'variant | algo'.
+        """
+        assert metric in {"beneficio", "distancia", "time_sec"}
+        by = self._extract_by_variant()
+        labels, data = [], []
+        for (variant, algo), series in sorted(by.items()):
+            labels.append(f"{variant} | {algo}")
+            data.append(series[metric])
+
+        plt.figure(figsize=(10, 5))
+        plt.boxplot(data, labels=labels, showmeans=True)
+        plt.xticks(rotation=30, ha="right")
+        ylab = {
+            "beneficio": "Beneficio",
+            "distancia": "Distancia",
+            "time_sec": "Tiempo (s)"
+        }[metric]
+        plt.ylabel(ylab)
+        plt.title(title or f"Distribución de {ylab} por variante y algoritmo")
+        plt.tight_layout()
+        out = os.path.join(self.out_dir, filename or f"box_{metric}.png")
+        plt.savefig(out, dpi=150)
+        plt.close()
+        return out
+
+    def plot_beneficio_distancia_scatter(self, filename: str = "scatter_beneficio_distancia.png", show_pareto: bool = True):
+        """
+        Scatter plot of (distancia, beneficio) colored per variant|algo.
+        Optionally overlays an estimated Pareto front (max beneficio, min distancia).
+        """
+        by = self._extract_by_variant()
+        plt.figure(figsize=(8, 6))
+        colors = plt.cm.get_cmap("tab20")
+        keys_sorted = sorted(by.keys())
+        for idx, key in enumerate(keys_sorted):
+            (variant, algo) = key
+            series = by[key]
+            x = np.array(series["distancia"])
+            y = np.array(series["beneficio"])
+            plt.scatter(x, y, s=35, alpha=0.7, color=colors(idx % 20), label=f"{variant} | {algo}")
+
+        if show_pareto:
+            # Compute all points across all variants, then Pareto front (min distancia, max beneficio)
+            xs, ys = [], []
+            for series in by.values():
+                xs.extend(series["distancia"])
+                ys.extend(series["beneficio"])
+            xs = np.array(xs)
+            ys = np.array(ys)
+            pareto_idx = self._pareto_front_indices(xs, ys)
+            plt.plot(xs[pareto_idx], ys[pareto_idx], "k--", lw=2, label="Frontera Pareto (aprox)")
+
+        plt.xlabel("Distancia")
+        plt.ylabel("Beneficio")
+        plt.title("Beneficio vs Distancia")
+        plt.legend(loc="best", fontsize=8)
+        plt.tight_layout()
+        out = os.path.join(self.out_dir, filename)
+        plt.savefig(out, dpi=150)
+        plt.close()
+        return out
+
+    @staticmethod
+    def _pareto_front_indices(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+        """
+        Approximate Pareto front assuming objectives: minimize x (distancia), maximize y (beneficio).
+        Returns indices sorted by increasing x among non-dominated points.
+        """
+        # Sort by x asc, then sweep keeping strictly increasing best y
+        order = np.argsort(x)
+        x_sorted, y_sorted = x[order], y[order]
+        best_y = -np.inf
+        keep = []
+        for i in range(len(x_sorted)):
+            if y_sorted[i] > best_y:
+                best_y = y_sorted[i]
+                keep.append(i)
+        return order[np.array(keep, dtype=int)]

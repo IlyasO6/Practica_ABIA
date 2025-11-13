@@ -217,7 +217,7 @@ def apply_action1x(estado, action: GasOperators):
         new_state.current_state[idx_gasolinera1][idx_peticio1] = None
         
         #  Actualizamos pérdida por la petición 2, si hay:
-        if idx_gasolinera2 is None and idx_peticio2 is None:
+        if idx_peticio2 is not None:
             beneficio_hoy, beneficio_sig = new_state.beneficio_peticiones[idx_gasolinera2][idx_peticio2]
             delta_perdida += beneficio_hoy - beneficio_sig
             delta_beneficio += -beneficio_hoy

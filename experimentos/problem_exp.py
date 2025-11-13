@@ -36,6 +36,7 @@ class GasProblem(Problem):
         return self.generate(state)
 
     def result(self, state, action) :
+        state.pasos += 1
         return self.apply(state, action)
 
     def value(self, state) -> float:
@@ -50,7 +51,7 @@ class GasProblem(Problem):
         #h = beneficio
         h = alpha*beneficio - distancia*beta - no_satisfechas*gamma
         #h = alpha*beneficio / (abs(no_satisfechas)*beta + abs(distancia)*gamma)
-        print(h)
+        #print(h)
         return h
         #  buscamos maximizar entonces el heurístico es (-) y el path cost (+)
         #  ambos se retornan como (-) desde state
