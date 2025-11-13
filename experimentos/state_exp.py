@@ -256,7 +256,7 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
             km_viaje = StateRepresentation._distancia_ruta(camion_id=id_camion,
                                                            ruta=copia_camion)
             
-            if km + km_viaje <= 640:
+            if km_viaje <= 640:
                 camiones[id_camion].extend(viaje)
                 km_camiones[id_camion] += km_viaje
                 km += km_viaje

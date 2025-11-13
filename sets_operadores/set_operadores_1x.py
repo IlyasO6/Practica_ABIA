@@ -230,7 +230,6 @@ def apply_action1x(estado, action: GasOperators):
         #  Eliminamos el viaje del camión 
         del new_state.camiones[idx_camio][idx_trip+1]
         del new_state.camiones[idx_camio][idx_trip]
-        new_state.camiones[idx_camio][0] 
         new_state.km_camiones[idx_camio] -= km
 
     elif isinstance(action, AddOnlyTrip):

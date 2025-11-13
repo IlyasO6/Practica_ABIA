@@ -123,7 +123,7 @@ class Experimento:
         """
         import csv
         path = os.path.join(self.out_dir, filename)
-        fieldnames = ["variant", "algorithm", "run", "beneficio", "distancia", "time_sec",
+        fieldnames = ["variant", "algorithm", "run", "beneficio", "distancia", "pasos", "time_sec",
                     "schedule_k", "schedule_lambda", "schedule_limit", "seed"]
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -158,6 +158,7 @@ class Experimento:
             ben = np.array([r["beneficio"] for r in rows], dtype=float)
             dis = np.array([r["distancia"] for r in rows], dtype=float)
             tms = np.array([r["time_sec"] for r in rows], dtype=float)
+            pasos = np.array([r["pasos"] for r in rows], dtype=float)
             stats = {
                 "n": len(rows),
                 "beneficio_mean": float(ben.mean()),
@@ -175,6 +176,7 @@ class Experimento:
                 "time_sec_min": float(tms.min()),
                 "time_sec_max": float(tms.max()),
                 "time_sec_median": float(np.median(tms)),
+                "pasos_mean": round(pasos.mean())
             }
             out.setdefault(variant, {})[algo] = stats
         return out
@@ -191,6 +193,7 @@ class Experimento:
             d["beneficio"].append(r["beneficio"])
             d["distancia"].append(r["distancia"])
             d["time_sec"].append(r["time_sec"])
+            d["pasos"].append(r["pasos"])
         return by
 
     def plot_box(self, metric: str = "beneficio", title: Optional[str] = None, filename: Optional[str] = None):

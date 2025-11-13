@@ -1,0 +1,44 @@
+{
+  "opx": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 98600.0,
+      "beneficio_std": 61.10100926607787,
+      "beneficio_min": 98540.0,
+      "beneficio_max": 98720.0,
+      "beneficio_median": 98580.0,
+      "distancia_mean": 2997.2,
+      "distancia_std": 46.3532331366672,
+      "distancia_min": 2944.0,
+      "distancia_max": 3086.0,
+      "distancia_median": 2990.0,
+      "time_sec_mean": 7.025060000000001,
+      "time_sec_std": 0.881244906305216,
+      "time_sec_min": 5.8769,
+      "time_sec_max": 8.5591,
+      "time_sec_median": 7.1893,
+      "pasos_mean": 66438
+    }
+  },
+  "op1x": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 95364.0,
+      "beneficio_std": 2167.49317569091,
+      "beneficio_min": 92760.0,
+      "beneficio_max": 98720.0,
+      "beneficio_median": 95280.0,
+      "distancia_mean": 5944.0,
+      "distancia_std": 0.0,
+      "distancia_min": 5944.0,
+      "distancia_max": 5944.0,
+      "distancia_median": 5944.0,
+      "time_sec_mean": 5.23785,
+      "time_sec_std": 0.7955889380410801,
+      "time_sec_min": 3.9423,
+      "time_sec_max": 6.0508,
+      "time_sec_median": 5.48035,
+      "pasos_mean": 133002
+    }
+  }
+}
