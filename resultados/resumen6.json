@@ -2,6 +2,7 @@
   "multiplicador_coste1": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 99476.0,
       "beneficio_std": 44.02019738458448,
       "beneficio_min": 99420.0,
@@ -18,11 +19,30 @@
       "time_sec_max": 4.9703,
       "time_sec_median": 4.74655,
       "pasos_mean": 31
+=======
+      "beneficio_mean": 95990.0,
+      "beneficio_std": 35.59026084010437,
+      "beneficio_min": 95940.0,
+      "beneficio_max": 96060.0,
+      "beneficio_median": 96000.0,
+      "distancia_mean": 3009.4,
+      "distancia_std": 30.82639561587872,
+      "distancia_min": 2974.0,
+      "distancia_max": 3054.0,
+      "distancia_median": 3003.0,
+      "time_sec_mean": 5.98728,
+      "time_sec_std": 0.38356484834886634,
+      "time_sec_min": 5.557,
+      "time_sec_max": 6.7082,
+      "time_sec_median": 5.85825,
+      "pasos_mean": 38
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste2": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 98366.0,
       "beneficio_std": 18.973665961010276,
       "beneficio_min": 98360.0,
@@ -39,11 +59,30 @@
       "time_sec_max": 5.1814,
       "time_sec_median": 4.506349999999999,
       "pasos_mean": 29
+=======
+      "beneficio_mean": 97974.0,
+      "beneficio_std": 34.058772731852805,
+      "beneficio_min": 97920.0,
+      "beneficio_max": 98020.0,
+      "beneficio_median": 97960.0,
+      "distancia_mean": 2736.6,
+      "distancia_std": 38.896443710618755,
+      "distancia_min": 2658.0,
+      "distancia_max": 2772.0,
+      "distancia_median": 2748.0,
+      "time_sec_mean": 5.280209999999999,
+      "time_sec_std": 0.25681133347264884,
+      "time_sec_min": 4.7485,
+      "time_sec_max": 5.5974,
+      "time_sec_median": 5.3317499999999995,
+      "pasos_mean": 28
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste3": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 92470.0,
       "beneficio_std": 2065.381320725062,
       "beneficio_min": 89700.0,
@@ -60,11 +99,30 @@
       "time_sec_max": 7.071,
       "time_sec_median": 6.28805,
       "pasos_mean": 26
+=======
+      "beneficio_mean": 99720.0,
+      "beneficio_std": 632.4555320336759,
+      "beneficio_min": 97920.0,
+      "beneficio_max": 99920.0,
+      "beneficio_median": 99920.0,
+      "distancia_mean": 2568.0,
+      "distancia_std": 31.622776601683793,
+      "distancia_min": 2478.0,
+      "distancia_max": 2578.0,
+      "distancia_median": 2578.0,
+      "time_sec_mean": 8.513490000000001,
+      "time_sec_std": 3.874222094376567,
+      "time_sec_min": 5.2271,
+      "time_sec_max": 13.6855,
+      "time_sec_median": 5.8999,
+      "pasos_mean": 33
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste4": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 92718.0,
       "beneficio_std": 626.1309767133391,
       "beneficio_min": 92520.0,
@@ -81,11 +139,30 @@
       "time_sec_max": 4.8174,
       "time_sec_median": 4.19905,
       "pasos_mean": 21
+=======
+      "beneficio_mean": 88844.0,
+      "beneficio_std": 908.1752155956593,
+      "beneficio_min": 87100.0,
+      "beneficio_max": 90060.0,
+      "beneficio_median": 89040.0,
+      "distancia_mean": 2089.8,
+      "distancia_std": 59.53486373546176,
+      "distancia_min": 2016.0,
+      "distancia_max": 2202.0,
+      "distancia_median": 2083.0,
+      "time_sec_mean": 9.07509,
+      "time_sec_std": 1.9261274847908347,
+      "time_sec_min": 4.2754,
+      "time_sec_max": 10.7835,
+      "time_sec_median": 9.57545,
+      "pasos_mean": 22
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste5": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 84746.0,
       "beneficio_std": 1991.7172936382758,
       "beneficio_min": 82880.0,
@@ -102,11 +179,30 @@
       "time_sec_max": 12.76,
       "time_sec_median": 5.036899999999999,
       "pasos_mean": 22
+=======
+      "beneficio_mean": 79946.0,
+      "beneficio_std": 492.7068093704409,
+      "beneficio_min": 79640.0,
+      "beneficio_max": 80660.0,
+      "beneficio_median": 79640.0,
+      "distancia_mean": 2257.8,
+      "distancia_std": 80.18561799558157,
+      "distancia_min": 2208.0,
+      "distancia_max": 2374.0,
+      "distancia_median": 2208.0,
+      "time_sec_mean": 7.77582,
+      "time_sec_std": 0.6904253049952456,
+      "time_sec_min": 6.5667,
+      "time_sec_max": 8.512,
+      "time_sec_median": 8.0129,
+      "pasos_mean": 15
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste6": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 79460.0,
       "beneficio_std": 0.0,
       "beneficio_min": 79460.0,
@@ -123,11 +219,30 @@
       "time_sec_max": 2.7016,
       "time_sec_median": 2.63905,
       "pasos_mean": 11
+=======
+      "beneficio_mean": 88120.0,
+      "beneficio_std": 0.0,
+      "beneficio_min": 88120.0,
+      "beneficio_max": 88120.0,
+      "beneficio_median": 88120.0,
+      "distancia_mean": 2154.0,
+      "distancia_std": 0.0,
+      "distancia_min": 2154.0,
+      "distancia_max": 2154.0,
+      "distancia_median": 2154.0,
+      "time_sec_mean": 6.010629999999999,
+      "time_sec_std": 0.4606438201039932,
+      "time_sec_min": 5.3397,
+      "time_sec_max": 6.7611,
+      "time_sec_median": 5.9578500000000005,
+      "pasos_mean": 16
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste7": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 90380.0,
       "beneficio_std": 0.0,
       "beneficio_min": 90380.0,
@@ -144,11 +259,30 @@
       "time_sec_max": 5.0087,
       "time_sec_median": 4.31995,
       "pasos_mean": 18
+=======
+      "beneficio_mean": 81740.0,
+      "beneficio_std": 0.0,
+      "beneficio_min": 81740.0,
+      "beneficio_max": 81740.0,
+      "beneficio_median": 81740.0,
+      "distancia_mean": 2280.0,
+      "distancia_std": 0.0,
+      "distancia_min": 2280.0,
+      "distancia_max": 2280.0,
+      "distancia_median": 2280.0,
+      "time_sec_mean": 10.051779999999997,
+      "time_sec_std": 1.207140687556987,
+      "time_sec_min": 7.0525,
+      "time_sec_max": 11.1173,
+      "time_sec_median": 10.52445,
+      "pasos_mean": 16
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste8": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 84380.0,
       "beneficio_std": 0.0,
       "beneficio_min": 84380.0,
@@ -165,11 +299,30 @@
       "time_sec_max": 2.8652,
       "time_sec_median": 2.8068,
       "pasos_mean": 15
+=======
+      "beneficio_mean": 74180.0,
+      "beneficio_std": 0.0,
+      "beneficio_min": 74180.0,
+      "beneficio_max": 74180.0,
+      "beneficio_median": 74180.0,
+      "distancia_mean": 1946.0,
+      "distancia_std": 0.0,
+      "distancia_min": 1946.0,
+      "distancia_max": 1946.0,
+      "distancia_median": 1946.0,
+      "time_sec_mean": 6.6212599999999995,
+      "time_sec_std": 0.5196618071186084,
+      "time_sec_min": 6.0381,
+      "time_sec_max": 7.5422,
+      "time_sec_median": 6.509399999999999,
+      "pasos_mean": 14
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   },
   "multiplicador_coste9": {
     "HC": {
       "n": 10,
+<<<<<<< HEAD
       "beneficio_mean": 80120.0,
       "beneficio_std": 0.0,
       "beneficio_min": 80120.0,
@@ -186,6 +339,45 @@
       "time_sec_max": 2.3018,
       "time_sec_median": 2.0395,
       "pasos_mean": 15
+=======
+      "beneficio_mean": 72080.0,
+      "beneficio_std": 0.0,
+      "beneficio_min": 72080.0,
+      "beneficio_max": 72080.0,
+      "beneficio_median": 72080.0,
+      "distancia_mean": 1760.0,
+      "distancia_std": 0.0,
+      "distancia_min": 1760.0,
+      "distancia_max": 1760.0,
+      "distancia_median": 1760.0,
+      "time_sec_mean": 6.339499999999999,
+      "time_sec_std": 0.7457851105453306,
+      "time_sec_min": 5.4263,
+      "time_sec_max": 7.6301,
+      "time_sec_median": 6.05425,
+      "pasos_mean": 13
+    }
+  },
+  "multiplicador_coste10": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 76140.0,
+      "beneficio_std": 0.0,
+      "beneficio_min": 76140.0,
+      "beneficio_max": 76140.0,
+      "beneficio_median": 76140.0,
+      "distancia_mean": 2332.0,
+      "distancia_std": 0.0,
+      "distancia_min": 2332.0,
+      "distancia_max": 2332.0,
+      "distancia_median": 2332.0,
+      "time_sec_mean": 4.866709999999999,
+      "time_sec_std": 0.30808889572113207,
+      "time_sec_min": 4.4634,
+      "time_sec_max": 5.2896,
+      "time_sec_median": 4.8109,
+      "pasos_mean": 13
+>>>>>>> 36a41736be4825959fe2a18fa94d1019eca27afe
     }
   }
 }
