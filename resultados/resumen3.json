@@ -1,0 +1,23 @@
+{
+  "exp": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 99036.0,
+      "beneficio_std": 1388.870044316602,
+      "beneficio_min": 95880.0,
+      "beneficio_max": 100100.0,
+      "beneficio_median": 99690.0,
+      "distancia_mean": 5553.2,
+      "distancia_std": 189.61762693495677,
+      "distancia_min": 5280.0,
+      "distancia_max": 5862.0,
+      "distancia_median": 5527.0,
+      "time_sec_mean": 5.846259999999999,
+      "time_sec_std": 1.5233578227061428,
+      "time_sec_min": 3.5693,
+      "time_sec_max": 7.8597,
+      "time_sec_median": 5.64185,
+      "pasos_mean": 1483
+    }
+  }
+}

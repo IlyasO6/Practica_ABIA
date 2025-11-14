@@ -9,7 +9,7 @@ sys.path.append(str(ROOT.parent))
 
 from _experimento import Experimento
 from problem_exp import GasProblem
-from state_exp import generate_initial_state, generate_initial_state_greedy
+from state_exp import generate_initial_state_empty, generate_initial_state_greedy
 
 from Practica_ABIA.problem_parameters import ProblemParameters
 
@@ -37,13 +37,14 @@ std_distancia = []
 mean_tiempo = []
 std_tiempo = []
 for i, j in enumerate(l):
-    output = Exp.compute_summary()[j]
-    mean_beneficio[i] = output["beneficio_mean"]
-    std_beneficio[i] = output["beneficio_std"]
-    mean_distancia[i] = output["distancia_mean"]
-    std_distancia[i] = output["distancia_std"]
-    mean_tiempo[i] = output["time_sec_mean"]
-    std_tiempo[i] = output["time_sec_std"]
+    output = Exp.compute_summary()[j]['HC']
+    #print(output)
+    mean_beneficio.append(output["beneficio_mean"])
+    std_beneficio.append(output["beneficio_std"])
+    mean_distancia.append(output["distancia_mean"])
+    std_distancia.append(output["distancia_std"])
+    mean_tiempo.append(output["time_sec_mean"])
+    std_tiempo.append(output["time_sec_std"])
 
 # t-test para comparar medias (hipótesis nula: mean1 = mean2) al 95%
 #  Vemos si los beneficios son iguales
@@ -70,7 +71,7 @@ t_stat_tiempo, p_value_tiempo = ttest_ind_from_stats(
 )
 test_tiempo = p_value_tiempo >= alpha # Si es False rechazamos la Null Hypothesis
 
-with open("Practica_ABIA/resultados/resultado1.txt", mode = "w") as resultado:
+with open("resultados/resultado1.txt", mode = "w") as resultado:
     resultado.write(f"Resultado del T-Test del beneficio: {test_beneficio}\n \
                     Resultado del T-Test del distancia: {test_distancia}\n \
                     Resultado del T-Test del tiempo: {test_tiempo}" )

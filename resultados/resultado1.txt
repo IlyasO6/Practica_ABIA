@@ -1,0 +1,3 @@
+Resultado del T-Test del beneficio: False
+                     Resultado del T-Test del distancia: False
+                     Resultado del T-Test del tiempo: False

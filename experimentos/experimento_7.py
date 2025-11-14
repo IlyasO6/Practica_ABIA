@@ -4,27 +4,33 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]  # Practica_ABIA
 sys.path.append(str(ROOT.parent))
 
-
-from _experimento import Experimento
-from problem_exp import GasProblem
-from state_exp import generate_initial_state, generate_initial_state_greedy
-
 from Practica_ABIA.problem_parameters import ProblemParameters
+from _experimento import Experimento
 
+km_hora = 80
 
-Exp = Experimento(numero_repeticiones=1)
+Exp = Experimento(numero_repeticiones=10)
 
-params = ProblemParameters(n_distribution_centers= 10, 
-                           n_gas_stations= 100,
-                           multiplicitat= 1)
+params0 = ProblemParameters(n_distribution_centers= 10, 
+                        n_gas_stations= 100,
+                        multiplicitat= 1)
 
-initial_state_x = generate_initial_state_greedy(params=params)
+params1 = ProblemParameters(n_distribution_centers= 10, 
+                        n_gas_stations= 100,
+                        multiplicitat= 1,
+                        max_km=640 + km_hora)
 
-problem_opx = GasProblem(initial_state=initial_state_x, set_operadores=0, algoritmo=2)
+params2 = ProblemParameters(n_distribution_centers= 10, 
+                        n_gas_stations= 100,
+                        multiplicitat= 1,
+                        max_km=640 - km_hora)
 
-Exp.experimento(algoritmo=2, opx = problem_opx)
+generadores = ("greedy",)
 
-for i,j in Exp.cache.items():
-    print(i, j, file=open("experimentos/resultados_1.txt", "a"))
+Exp.experimento(initial_states=[generadores, "normal"], params=params0, algoritmo=0)
+Exp.experimento(initial_states=[generadores, "menos_1h"], params=params1, algoritmo=0)
+Exp.experimento(initial_states=[generadores, "mas_1h"], params=params2, algoritmo=0)
 
+Exp.save_csv("resultado7.csv")
+Exp.save_json_summary("resumen7.json")
 #Exp.get_plt()

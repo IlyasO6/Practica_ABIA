@@ -9,10 +9,10 @@ from Practica_ABIA.sets_operadores.set_operadores_3 import generate_actions_3, a
 from Practica_ABIA.sets_operadores.set_operadores_x import generate_actionsx, apply_actionx, generate_one_actionx
 from Practica_ABIA.sets_operadores.set_operadores_1x import generate_actions1x, apply_action1x, generate_one_action1x
 class GasProblem(Problem):
-    def __init__(self, initial_state, set_operadores, algoritmo:int=1):
+    def __init__(self, initial_state, set_operadores, algoritmo:int=0):
         self.set_operadores = set_operadores
         if set_operadores == 1:
-            if algoritmo == 1:
+            if algoritmo == 0:
                 self.generate = generate_actions1x
             else:
                 self.generate = generate_one_action1x
@@ -24,7 +24,7 @@ class GasProblem(Problem):
             self.generate = generate_actions_3
             self.apply = apply_action_3
         else:
-            if algoritmo == 1:
+            if algoritmo == 0:
                 self.generate = generate_actionsx
             else:
                 self.generate = generate_one_actionx
@@ -36,11 +36,17 @@ class GasProblem(Problem):
         return self.generate(state)
 
     def result(self, state, action) :
-        state.pasos += 1
-        return self.apply(state, action)
+        new_state = self.apply(state, action)
+        new_state.pasos += 1
+        if not hasattr(new_state, "sa_trace") or new_state.sa_trace is None:
+            new_state.sa_trace = [(float(state.beneficio), float(state.distancia + state.perdida_no_asignadas))]
+        new_state.sa_trace.append(
+            (float(new_state.beneficio), float(new_state.distancia + new_state.perdida_no_asignadas))
+        )
+        return new_state
 
     def value(self, state) -> float:
-        distancia = state.distancia * 2
+        distancia = state.distancia * state.COST_KM
         beneficio = state.beneficio
         
         no_satisfechas = state.perdida_no_asignadas

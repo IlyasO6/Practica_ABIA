@@ -3,11 +3,12 @@ import random
 
 from typing import Dict, List, Tuple
 from Practica_ABIA.abia_Gasolina import *
-
+from Practica_ABIA.problem_parameters import ProblemParameters
 
 class StateRepresentation(object):
     
     MAX_KM = 640
+    COST_KM = 2
     MAX_VIAJES = 5
     MAX_PETICIONES_VIAJE = 2
     dists = None
@@ -30,9 +31,12 @@ class StateRepresentation(object):
         self.distancia = distancia_total
         self.perdida_no_asignadas = perdida_no_asignadas
         self.pasos = pasos
+        self.sa_trace: List[Tuple[float, float]] = [
+            (float(self.beneficio), float(self.distancia + self.perdida_no_asignadas))
+        ]
     
     def copy(self):
-        return StateRepresentation(
+        new_state = StateRepresentation(
             asignaciones= [list(gasolinera) for gasolinera in self.current_state],
             camiones= [camion.copy() for camion in self.camiones],
             km_camiones= self.km_camiones.copy(),
@@ -41,6 +45,8 @@ class StateRepresentation(object):
             perdida_no_asignadas= self.perdida_no_asignadas,
             pasos = self.pasos
         )
+        new_state.sa_trace = self.sa_trace.copy()
+        return new_state
 
     def __repr__(self) -> str:
         msg = []
@@ -130,13 +136,13 @@ class StateRepresentation(object):
                     )
                 else:
                     g = (p1 or p2)[0]
-                    distancia += 2 * cls._dist_c_g(camion_id, g)
+                    distancia += cls.COST_KM * cls._dist_c_g(camion_id, g)
         return distancia
 
 #  state --> lista(lista(), lista())
 #  state -->   list(tuple(gas, camio2, camio1))
 
-def generate_initial_state(params):
+def generate_initial_state_empty(params):
     n_centers = params.n_centers
     n_gas = params.n_gas
     multiplicitat = params.multiplicitat
@@ -163,7 +169,8 @@ def generate_initial_state(params):
         for pet in (range(len(gas_stations[gas]))):
             beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
             perdida_total += beneficio_hoy - beneficio_sig
-
+    StateRepresentation.MAX_KM = params.max_km
+    StateRepresentation.COST_KM = params.cost_km
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camions,
@@ -171,6 +178,139 @@ def generate_initial_state(params):
         beneficio=0,
         distancia_total=0,
         perdida_no_asignadas=perdida_total,
+    )
+
+# ...existing code...
+
+def generate_initial_state_random(params: ProblemParameters, seed: int | None = None):
+    """
+    Crea un estado inicial aleatorio válido:
+    - Asigna peticiones a camiones respetando:
+        * Máx. viajes por camión (MAX_VIAJES => 2 slots por viaje)
+        * Máx. kilómetros por camión (MAX_KM)
+    - Cada viaje ocupa 2 posiciones en la ruta: [(g1,p1),(g2,p2)] o [(g1,p1), None]
+    - Evita emparejar dos peticiones de la misma gasolinera en el mismo viaje.
+    """
+    n_centers = params.n_centers
+    n_gas = params.n_gas
+    multiplicitat = params.multiplicitat
+
+    rng = random.Random(seed if seed is not None else random.randint(0, 10_000))
+
+    gasolineras = Gasolineras(num_gasolineras=n_gas, seed=rng.randint(0, 10_000)).gasolineras
+    peticiones = [gasolinera.peticiones for gasolinera in gasolineras]
+
+    # current_state: None si no asignada; cuando asignada, contiene el idx del camión
+    gas_stations = [[None for _ in row] for row in peticiones]
+
+    gasolineras_coords = [(g.cx, g.cy) for g in gasolineras]
+    centros_coords = [(c.cx, c.cy) for c in CentrosDistribucion(
+        num_centros=n_centers, multiplicidad=multiplicitat, seed=rng.randint(0, 10_000)
+    ).centros]
+
+    # Precompute distances and benefits
+    StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
+
+    # Inicializar rutas vacías
+    camiones: list[list[Tuple[int, int] | None]] = [[] for _ in centros_coords]
+
+    # Pool de peticiones sin asignar
+    pool = [(g, p) for g in range(len(peticiones)) for p in range(len(peticiones[g]))]
+    rng.shuffle(pool)
+
+    beneficio_total = 0.0
+
+    # Intentamos añadir viajes (hasta que no sea posible añadir más)
+    made_progress = True
+    while pool and made_progress:
+        made_progress = False
+        cam_ids = list(range(len(centros_coords)))
+        rng.shuffle(cam_ids)
+
+        for cid in cam_ids:
+            ruta = camiones[cid]
+            if len(ruta) >= 2 * StateRepresentation.MAX_VIAJES:
+                continue
+
+            # Intentos por camión en esta pasada (evita ciclos infinitos)
+            attempts = min(20, len(pool))
+            for _ in range(attempts):
+                if not pool:
+                    break
+
+                # Elegimos una petición base
+                g1, p1 = pool[rng.randrange(len(pool))]
+
+                # Candidatos para segunda parada (no misma gasolinera)
+                candidates2 = [(g2, p2) for (g2, p2) in pool if not (g2 == g1 and p2 == p1) and g2 != g1]
+                rng.shuffle(candidates2)
+
+                # Probar primero con dos paradas (si hay candidatos), luego con 1
+                tried_variants = []
+
+                if candidates2:
+                    # Limitar intentos de pareja para no explorar todo
+                    k2 = min(10, len(candidates2))
+                    for (g2, p2) in candidates2[:k2]:
+                        viaje = [(g1, p1), (g2, p2)]
+                        copia = ruta + viaje
+                        km_total = StateRepresentation._distancia_ruta(camion_id=cid, ruta=copia)
+                        if km_total <= StateRepresentation.MAX_KM and len(copia) <= 2 * StateRepresentation.MAX_VIAJES:
+                            # Aceptar 2 paradas
+                            ruta.extend(viaje)
+                            camiones[cid] = ruta
+                            gas_stations[g1][p1] = cid
+                            gas_stations[g2][p2] = cid
+                            beneficio_total += StateRepresentation.beneficio_peticiones[g1][p1][0]
+                            beneficio_total += StateRepresentation.beneficio_peticiones[g2][p2][0]
+                            # Eliminar del pool
+                            pool.remove((g1, p1))
+                            pool.remove((g2, p2))
+                            made_progress = True
+                            break
+                        tried_variants.append(("2stop", (g1, p1, g2, p2)))
+
+                    if made_progress:
+                        break
+
+                # Si 2 paradas no fue posible, probamos 1 parada
+                viaje = [(g1, p1), None]
+                copia = ruta + viaje
+                km_total = StateRepresentation._distancia_ruta(camion_id=cid, ruta=copia)
+                if km_total <= StateRepresentation.MAX_KM and len(copia) <= 2 * StateRepresentation.MAX_VIAJES:
+                    ruta.extend(viaje)
+                    camiones[cid] = ruta
+                    gas_stations[g1][p1] = cid
+                    beneficio_total += StateRepresentation.beneficio_peticiones[g1][p1][0]
+                    pool.remove((g1, p1))
+                    made_progress = True
+                    break
+
+            # Si este camión no pudo añadir nada, pasamos al siguiente
+            # Continuamos el bucle for cid
+
+    # Recalcular km y distancia total coherente con la representación final
+    km_camiones = [StateRepresentation._distancia_ruta(camion_id=i, ruta=camiones[i])
+                   for i in range(len(camiones))]
+    distancia_total = sum(km_camiones)
+
+    # Pérdida de no asignadas = suma(beneficio_hoy - beneficio_sig) de todas las no asignadas
+    perdida_total = 0.0
+    for g in range(len(gas_stations)):
+        for p in range(len(gas_stations[g])):
+            if gas_stations[g][p] is None:
+                beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[g][p]
+                perdida_total += (beneficio_hoy - beneficio_sig)
+    StateRepresentation.MAX_KM = params.max_km
+    StateRepresentation.COST_KM = params.cost_km
+
+    return StateRepresentation(
+        asignaciones=gas_stations,
+        camiones=camiones,
+        km_camiones=km_camiones,
+        beneficio=beneficio_total,
+        distancia_total=distancia_total,
+        perdida_no_asignadas=perdida_total
     )
 
 
@@ -256,7 +396,7 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
             km_viaje = StateRepresentation._distancia_ruta(camion_id=id_camion,
                                                            ruta=copia_camion)
             
-            if km_viaje <= 640:
+            if km_viaje <= params.max_km:
                 camiones[id_camion].extend(viaje)
                 km_camiones[id_camion] += km_viaje
                 km += km_viaje
@@ -279,6 +419,8 @@ def generate_initial_state_greedy(params: ProblemParameters, seed = None):
                 beneficio_hoy, beneficio_sig = StateRepresentation.beneficio_peticiones[gas][pet]
                 perdida_total += beneficio_hoy - beneficio_sig
     print(beneficio_total, perdida_total, distancia_total)
+    StateRepresentation.MAX_KM = params.max_km
+    StateRepresentation.COST_KM = params.cost_km
     return StateRepresentation(
         asignaciones=gas_stations,
         camiones=camiones,

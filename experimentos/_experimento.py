@@ -3,6 +3,7 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import os
 import json
 import random
+import math
 
 from aima.search import hill_climbing, simulated_annealing, exp_schedule
 
@@ -10,6 +11,11 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import numpy as np
+
+from problem_exp import GasProblem
+from state_exp import generate_initial_state_empty, generate_initial_state_random, generate_initial_state_greedy
+
+from Practica_ABIA.problem_parameters import ProblemParameters
 
 
 class Experimento:
@@ -23,13 +29,97 @@ class Experimento:
         if seed is not None:
             random.seed(seed)
             np.random.seed(seed)
+        
+        self.operators = 0
+
+
+    def sa_run_with_trace(
+        self,
+        problem,
+        schedule_params: Optional[Tuple[float, float, int]] = None,
+        label: Optional[str] = None,
+        seed: Optional[int] = None
+    ) -> dict:
+        """
+        Runs aima.simulated_annealing and returns the per-accepted-move trace stored in the state.
+        The trace is a list of (beneficio, distancia+perdida) tuples. Length = accepted moves + 1.
+        """
+        if schedule_params is not None:
+            k, lam, limit = schedule_params
+        else:
+            k, lam, limit = (20.0, 0.005, 100)
+        # reset initial state's counters/trace
+        problem.initial.pasos = 0
+        problem.initial.sa_trace = [
+            (float(problem.initial.beneficio), float(problem.initial.distancia + problem.initial.perdida_no_asignadas))
+        ]
+        schedule = exp_schedule(k, lam, limit)
+        def safe_schedule(t, _s=schedule):
+            T = _s(t)
+            return 1e-12 if T <= 0 else T
+        t1 = time()
+        state = simulated_annealing(problem, schedule=schedule)
+        t2 = time()
+        return {
+            "label": label or "SA-trace",
+            "schedule": (float(k), float(lam), int(limit)),
+            "trace": list(getattr(state, "sa_trace", [])),
+            "accepted_ratio": (len(getattr(state, "sa_trace", [])) - 1) / float(limit) if limit else 0.0,
+            "final_state": state
+        }
+
+    def plot_sa_trace_beneficio_coste(
+        self,
+        traces: List[dict],
+        filename: str = "sa_trace_beneficio_coste.png",
+        title: Optional[str] = None
+    ) -> str:
+        """
+        Plots beneficio and (distancia + perdida) vs pasos for one or multiple traces.
+
+        Input traces: list of dicts as returned by sa_run_with_trace (uses .trace and .label).
+        Produces a 2-row plot:
+          - Top: beneficio vs pasos.
+          - Bottom: (distancia + perdida) vs pasos.
+        """
+        plt.figure(figsize=(10, 7))
+        ax1 = plt.subplot(2, 1, 1)
+        ax2 = plt.subplot(2, 1, 2, sharex=ax1)
+
+        for tr in traces:
+            label = tr.get("label", "trace")
+            data = tr["trace"]
+            pasos = list(range(len(data)))
+            beneficio = [b for (b, c) in data]
+            coste = [c for (b, c) in data]  # distancia + perdida
+
+            ax1.plot(pasos, beneficio, label=f"{label} | beneficio")
+            ax2.plot(pasos, coste, label=f"{label} | dist+perd")
+
+        ax1.set_ylabel("Beneficio")
+        ax1.set_title(title or "SA: Beneficio y (Distancia + Pérdida) vs Pasos")
+        ax1.grid(True, alpha=0.25)
+        ax1.legend(loc="best", fontsize=8)
+
+        ax2.set_xlabel("Pasos")
+        ax2.set_ylabel("Distancia + Pérdida")
+        ax2.grid(True, alpha=0.25)
+        ax2.legend(loc="best", fontsize=8)
+
+        plt.tight_layout()
+        out = os.path.join(self.out_dir, filename)
+        plt.savefig(out, dpi=150)
+        plt.close()
+        return out
 
     # ---------- Low-level runners ----------
 
-    def experimento_hc(self, problem, label: str) -> Tuple[List[float], List[Tuple[float, float]]]:
+    def experimento_hc(self, problem, label: str, multiplicador:int,initial_state:Optional[str] = None, reps:int = 10) -> Tuple[List[float], List[Tuple[float, float]]]:
+        if initial_state is None:
+            initial_state = "Not relevant"
         times_problem: List[float] = []
         vals_problem: List[Tuple[float, float]] = []
-        for i in range(self.n):
+        for i in range(reps):
             print(f"Repeticion {i}")
             t0 = time()
             state = hill_climbing(problem)
@@ -40,10 +130,13 @@ class Experimento:
             self.rows.append({
                 "variant": label,
                 "algorithm": "HC",
+                "initial_state":initial_state,
                 "run": i,
+                "multiplicador":multiplicador, 
                 "beneficio": float(state.beneficio),
                 "distancia": float(state.distancia),
                 "pasos": state.pasos,
+                "peticiones_satisfechas": sum([1 for gas in state.current_state for pet in gas if pet is not None]),
                 "time_sec": round(t1 - t0, 4),
                 "schedule_k": None,
                 "schedule_lambda": None,
@@ -52,7 +145,11 @@ class Experimento:
             })
         return times_problem, vals_problem
 
-    def experimento_sa(self, problem, label: str, schedule_params: Optional[Tuple[float, float, int]]) -> Tuple[List[float], List[Tuple[float, float]]]:
+    def experimento_sa(self, problem, label: str, schedule_params: Optional[Tuple[float, float, int]], multiplicador:int,
+                       initial_state:Optional[str] = None, reps:int = 10) -> Tuple[List[float], List[Tuple[float, float]]]:
+        if initial_state is None:
+            initial_state = "Not relevant"
+
         if schedule_params is not None:
             k, lam, limit = schedule_params
         else:
@@ -61,7 +158,8 @@ class Experimento:
 
         times_problem: List[float] = []
         vals_problem: List[Tuple[float, float]] = []
-        for i in range(self.n):
+        for i in range(reps):
+            print("Repeticion", i)
             t0 = time()
             state = simulated_annealing(problem, schedule=schedule)
             t1 = time()
@@ -71,11 +169,13 @@ class Experimento:
             self.rows.append({
                 "variant": label,
                 "algorithm": "SA",
+                "initial_state": initial_state,
                 "run": i,
+                "multiplicador":multiplicador,
                 "beneficio": float(state.beneficio),
                 "distancia": float(state.distancia),
                 "pasos": state.pasos,
-                "time_sec": round(float(t1 - t0, 4)),
+                "time_sec": round(float(t1 - t0), 4),
                 "schedule_k": float(k),
                 "schedule_lambda": float(lam),
                 "schedule_limit": int(limit),
@@ -85,28 +185,58 @@ class Experimento:
 
     # ---------- Batch runner ----------
 
-    def experimento(self, algoritmo: int = 0, schedule_params: Optional[Tuple[float, float, int]] = None, **versiones):
+    def _create_problem(self,initial_state, algoritmo, params):
+        if initial_state == "empty":
+            state = generate_initial_state_empty(params=params)
+        elif initial_state == "random":
+            state = generate_initial_state_random(params=params)
+        elif initial_state == "greedy":
+            state = generate_initial_state_greedy(params=params)
+        else:
+            raise ValueError("Initial state label not correct.")
+        
+        return GasProblem(initial_state=state, set_operadores=self.operators, algoritmo=algoritmo)
+
+    def experimento(self, multiplicador:int = 0, initial_states: Optional[Tuple] = None, params: ProblemParameters = None, algoritmo: int = 0, schedule_params: Optional[Tuple[float, float, int]] = None, **versiones):
         """
+        initial_state: ej -> ('empty', 'greedy')
         algoritmo: 0 -> hill climbing (HC), 1 -> simulated annealing (SA)
         versiones: pass as named arguments: nombre_variant=problem_instance
         Returns: self.cache: idx -> (name, (times_list, values_list))
         """
         # Clear in case of reuse
         self.cache.clear()
+        if initial_states is None:
+            names = list(versiones.keys())
+            problems = list(versiones.values())
+            for i, problem in enumerate(problems):
+                label = names[i]
+                print(f"--- Running variant: {label} ---")
+                if algoritmo == 0:
+                    times, values = self.experimento_hc(problem, label, multiplicador=multiplicador, reps=self.n)
+                elif algoritmo == 1:
+                    times, values = self.experimento_sa(problem, label, multiplicador=multiplicador, schedule_params=schedule_params, reps=self.n)
+                else:
+                    raise ValueError("algoritmo must be 0 (HC) or 1 (SA)")
+                self.cache[i] = (label, (times, values))
+        else:
+            i = 0
+            label = initial_states[1]
+            for initial_state in initial_states[0]:
+                print(f"--- Running variant: {label} ---")
+                for j in range(self.n):
+                    print(f"Repeticion {j}")
+                    problem = self._create_problem(initial_state=initial_state, algoritmo=algoritmo, params = params)
+                    
+                    if algoritmo == 0:
+                        times, values = self.experimento_hc(problem, label, multiplicador=multiplicador,  initial_state=initial_state, reps=1)
+                    elif algoritmo == 1:
+                        times, values = self.experimento_sa(problem, label, multiplicador=multiplicador, schedule_params=schedule_params, initial_state=initial_state, reps=1)
+                    else:
+                        raise ValueError("algoritmo must be 0 (HC) or 1 (SA)")
+                
+                i += 1
 
-        names = list(versiones.keys())
-        problems = list(versiones.values())
-
-        for i, problem in enumerate(problems):
-            label = names[i]
-            print(f"--- Running variant: {label} ---")
-            if algoritmo == 0:
-                times, values = self.experimento_hc(problem, label)
-            elif algoritmo == 1:
-                times, values = self.experimento_sa(problem, label, schedule_params=schedule_params)
-            else:
-                raise ValueError("algoritmo must be 0 (HC) or 1 (SA)")
-            self.cache[i] = (label, (times, values))
         return self.cache
 
     
@@ -123,7 +253,7 @@ class Experimento:
         """
         import csv
         path = os.path.join(self.out_dir, filename)
-        fieldnames = ["variant", "algorithm", "run", "beneficio", "distancia", "pasos", "time_sec",
+        fieldnames = ["variant", "algorithm", "initial_state", "run", "multiplicador","beneficio", "distancia", "pasos", "peticiones_satisfechas","time_sec",
                     "schedule_k", "schedule_lambda", "schedule_limit", "seed"]
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)

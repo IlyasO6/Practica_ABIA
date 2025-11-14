@@ -1,0 +1,23 @@
+{
+  "greedy": {
+    "HC": {
+      "n": 40,
+      "beneficio_mean": 244016.0,
+      "beneficio_std": 110176.10194593018,
+      "beneficio_min": 95100.0,
+      "beneficio_max": 393620.0,
+      "beneficio_median": 242720.0,
+      "distancia_mean": 4187.45,
+      "distancia_std": 1130.6161685173356,
+      "distancia_min": 2220.0,
+      "distancia_max": 6084.0,
+      "distancia_median": 4310.0,
+      "time_sec_mean": 187.91310249999998,
+      "time_sec_std": 220.04129262393235,
+      "time_sec_min": 3.1478,
+      "time_sec_max": 703.529,
+      "time_sec_median": 87.84145000000001,
+      "pasos_mean": 689166
+    }
+  }
+}

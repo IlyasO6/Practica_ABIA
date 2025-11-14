@@ -1,0 +1,65 @@
+{
+  "greedy": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 97838.0,
+      "beneficio_std": 1212.3237558048959,
+      "beneficio_min": 95360.0,
+      "beneficio_max": 99500.0,
+      "beneficio_median": 97850.0,
+      "distancia_mean": 2799.4,
+      "distancia_std": 498.4224446524588,
+      "distancia_min": 2358.0,
+      "distancia_max": 3808.0,
+      "distancia_median": 2601.0,
+      "time_sec_mean": 6.5440900000000015,
+      "time_sec_std": 2.9197255732726357,
+      "time_sec_min": 2.7399,
+      "time_sec_max": 11.8965,
+      "time_sec_median": 5.3915,
+      "pasos_mean": 45231
+    }
+  },
+  "empty": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 99760.0,
+      "beneficio_std": 1621.1929763808707,
+      "beneficio_min": 95180.0,
+      "beneficio_max": 100560.0,
+      "beneficio_median": 100230.0,
+      "distancia_mean": 2616.0,
+      "distancia_std": 232.38856349752766,
+      "distancia_min": 2314.0,
+      "distancia_max": 3014.0,
+      "distancia_median": 2632.0,
+      "time_sec_mean": 51.7927,
+      "time_sec_std": 15.772843859691953,
+      "time_sec_min": 28.6035,
+      "time_sec_max": 73.0593,
+      "time_sec_median": 54.92045,
+      "pasos_mean": 326030
+    }
+  },
+  "random": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 92652.0,
+      "beneficio_std": 3032.816073113128,
+      "beneficio_min": 86040.0,
+      "beneficio_max": 96480.0,
+      "beneficio_median": 92980.0,
+      "distancia_mean": 5702.4,
+      "distancia_std": 185.8525102212923,
+      "distancia_min": 5302.0,
+      "distancia_max": 5900.0,
+      "distancia_median": 5756.0,
+      "time_sec_mean": 1.7374499999999997,
+      "time_sec_std": 0.34567277477727726,
+      "time_sec_min": 1.1537,
+      "time_sec_max": 2.299,
+      "time_sec_median": 1.8354,
+      "pasos_mean": 15613
+    }
+  }
+}
