@@ -17,8 +17,7 @@ Exp = Experimento(numero_repeticiones=10)
 params = ProblemParameters(n_distribution_centers= 10, 
                            n_gas_stations= 100,
                            multiplicitat= 1)
-initial_state = generate_initial_state_empty(params=params)
-problem = GasProblem(initial_state=initial_state, set_operadores=0, algoritmo=1)
+initial_state = generate_initial_state_greedy(params=params)
 """
 lim = 10000
 
@@ -49,21 +48,36 @@ for (k, lam, limit) in schedules:
 png = Exp.plot_sa_trace_beneficio_coste(traces, filename="sa_trace_beneficio_coste2(for_k_lam)7.png")
 print("Saved", png)
 """
-K = (10, 20, 50, 100, 500, 5000)
-LAM = (0.0001, 0.0005, 0.001, 0.01, 0.1)
-"""
+K = (5, 20, 50)
+LAM = (0.001, 0.0005, 0.0001)
+generadores = ("greedy",)
+i = 0
 for k in K:
     for lam in LAM:
-        dynamic_key = f"k_{k}--lam_{lam}"
-        kwargs = {
-            dynamic_key:problem
-        }
-"""
-Exp.experimento(algoritmo=1, schedule_params=(50, 0.0005, 10000), exp=problem)
+        pass
+#Exp.experimento(algoritmo=1, schedule_params=(8.4, 0.2221, 1000), sa0 = problem_sa)
+#Exp.experimento(algoritmo=1, schedule_params=(5, 0.1, 1000), sa1 = problem_sa)
+#  cogemos este: --> Exp.experimento(algoritmo=1, schedule_params=(10, 0.5, 1000), sa2 = problem_sa)
 
+Exp.experimento(algoritmo=1, schedule_params=(5, 0.001, 2000), initial_states=[generadores, f"sa_L-{0.001}--K-{5}"], params = params)
+        
+
+#Exp.experimento(algoritmo=0, initial_states=[generadores, "hc"], params = params)
+
+#Exp.experimento(algoritmo=0, hc=problem_hc)
 "k_50--lam_0.0005"
 #Exp.experimento(algoritmo=1, schedule_params=None, opx = problem)
 
 #Exp.save_csv("resultado3.csv")
 Exp.save_json_summary("resumen3.json")
 #Exp.get_plt()
+"""
+good:
+
+(5, 0.001, 1000)
+k_20--lam_0.5
+k_10--lam_0.0005
+k_10--lam_0.1
+k_1--lam_0.01
+k_1--lam_0.5
+"""
