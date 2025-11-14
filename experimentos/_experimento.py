@@ -126,8 +126,21 @@ class Experimento:
             t1 = time()
             times_problem.append(t1 - t0)
             vals_problem.append((state.beneficio, state.distancia))
-            # Store row for CSV
-            self.rows.append({
+            
+            count_pet = 0
+            peticiones_satisfechas = dict()
+            for idx_gasolinera in range(len(state.lista_peticiones)):
+                for idx_peticion in range(len(state.lista_peticiones[idx_gasolinera])):
+                    dias_peticion = state.lista_peticiones[idx_gasolinera][idx_peticion]
+                    estado = state.current_state[idx_gasolinera][idx_peticion]
+                    if estado is not None:
+                        count_pet += 1
+                        if dias_peticion in peticiones_satisfechas:
+                            peticiones_satisfechas[dias_peticion] += 1
+                        else:
+                            peticiones_satisfechas[dias_peticion] = 1
+                    
+            row = {
                 "variant": label,
                 "algorithm": "HC",
                 "initial_state":initial_state,
@@ -136,13 +149,17 @@ class Experimento:
                 "beneficio": float(state.beneficio),
                 "distancia": float(state.distancia),
                 "pasos": state.pasos,
-                "peticiones_satisfechas": sum([1 for gas in state.current_state for pet in gas if pet is not None]),
+                "peticiones_satisfechas": count_pet,
                 "time_sec": round(t1 - t0, 4),
                 "schedule_k": None,
                 "schedule_lambda": None,
                 "schedule_limit": None,
                 "seed": self.global_seed
-            })
+            }
+            for dias, count_peticiones in peticiones_satisfechas.items():
+                row[f"{dias}_dias"] = count_peticiones
+            # Store row for CSV
+            self.rows.append(row)
         return times_problem, vals_problem
 
     def experimento_sa(self, problem, label: str, schedule_params: Optional[Tuple[float, float, int]], multiplicador:int,
@@ -254,7 +271,7 @@ class Experimento:
         import csv
         path = os.path.join(self.out_dir, filename)
         fieldnames = ["variant", "algorithm", "initial_state", "run", "multiplicador","beneficio", "distancia", "pasos", "peticiones_satisfechas","time_sec",
-                    "schedule_k", "schedule_lambda", "schedule_limit", "seed"]
+                    "schedule_k", "schedule_lambda", "schedule_limit", "seed", "0_dias", "1_dias", "2_dias", "3_dias", "4_dias"]
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
