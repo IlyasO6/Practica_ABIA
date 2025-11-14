@@ -12,7 +12,7 @@ from Practica_ABIA.problem_parameters import ProblemParameters
 
 Exp = Experimento(numero_repeticiones=10)
 
-for i in range(1, 10):
+for i in range(1, 11):
     params = ProblemParameters(n_distribution_centers= 10, 
                             n_gas_stations= 100,
                             multiplicitat= 1,
