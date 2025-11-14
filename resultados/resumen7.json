@@ -1,0 +1,65 @@
+{
+  "normal": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 97288.0,
+      "beneficio_std": 1305.6867073604517,
+      "beneficio_min": 94980.0,
+      "beneficio_max": 99140.0,
+      "beneficio_median": 97120.0,
+      "distancia_mean": 2739.0,
+      "distancia_std": 345.3040528127188,
+      "distancia_min": 2396.0,
+      "distancia_max": 3282.0,
+      "distancia_median": 2618.0,
+      "time_sec_mean": 12.247910000000001,
+      "time_sec_std": 5.505913533132657,
+      "time_sec_min": 5.1341,
+      "time_sec_max": 20.5016,
+      "time_sec_median": 12.9033,
+      "pasos_mean": 34
+    }
+  },
+  "menos_1h": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 97748.0,
+      "beneficio_std": 1156.4774100690424,
+      "beneficio_min": 95660.0,
+      "beneficio_max": 99000.0,
+      "beneficio_median": 97920.0,
+      "distancia_mean": 2964.2,
+      "distancia_std": 372.0315996136768,
+      "distancia_min": 2360.0,
+      "distancia_max": 3780.0,
+      "distancia_median": 2873.0,
+      "time_sec_mean": 14.57602,
+      "time_sec_std": 3.990449789406926,
+      "time_sec_min": 8.0053,
+      "time_sec_max": 19.7863,
+      "time_sec_median": 15.7933,
+      "pasos_mean": 37
+    }
+  },
+  "mas_1h": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 97314.0,
+      "beneficio_std": 2207.08052513823,
+      "beneficio_min": 93300.0,
+      "beneficio_max": 99540.0,
+      "beneficio_median": 97340.0,
+      "distancia_mean": 2787.2,
+      "distancia_std": 332.10065408614366,
+      "distancia_min": 2228.0,
+      "distancia_max": 3386.0,
+      "distancia_median": 2719.0,
+      "time_sec_mean": 11.60105,
+      "time_sec_std": 2.9052509814127934,
+      "time_sec_min": 7.7032,
+      "time_sec_max": 17.6218,
+      "time_sec_median": 10.9478,
+      "pasos_mean": 32
+    }
+  }
+}
