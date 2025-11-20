@@ -5,7 +5,12 @@ from aima.search import Problem, simulated_annealing, hill_climbing
 from state import *
 from operators import GasOperators
 
+<<<<<<< HEAD
 class GasProblem(Problem):
+=======
+class GasProblem(Problem): #mahsdgsih = 
+    def __init__(self, initial_state:StateRepresentation, algoritmo:int=0):
+>>>>>>> 7a14997095d907302bb9bede767f09f6a4d661b9
 
     def __init__(self, initial_state:StateRepresentation, algoritmo:int=0):
         """ Algoritmo: 0 --> hill climbing ; 1 --> simulated annealing """
