@@ -5,7 +5,7 @@ from aima.search import Problem
 from state import StateRepresentation
 from operators import GasOperators
 
-class GasProblem(Problem):
+class GasProblem(Problem): #mahsdgsih = 
     def __init__(self, initial_state:StateRepresentation, algoritmo:int=0):
 
         if algoritmo == 0:
