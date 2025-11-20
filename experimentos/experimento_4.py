@@ -20,7 +20,7 @@ for i in range(1, 5):
 
     generadores = ("greedy",)
 
-    Exp.experimento(initial_states=generadores, params=params, algoritmo=0, multiplicador=i)
+    Exp.experimento(initial_states=[generadores, f"multiplicador_{i}"], schedule_params=(5, 0.001, 5000), params=params, algoritmo=1, multiplicador=i)
 
 Exp.save_csv("resultado4.csv")
 Exp.save_json_summary("resumen4.json")

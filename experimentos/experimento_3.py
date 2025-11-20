@@ -48,21 +48,14 @@ for (k, lam, limit) in schedules:
 png = Exp.plot_sa_trace_beneficio_coste(traces, filename="sa_trace_beneficio_coste2(for_k_lam)7.png")
 print("Saved", png)
 """
-K = (5, 20, 50)
-LAM = (0.001, 0.0005, 0.0001)
+s = (3, 0.001, 2000)
+s2 = (50, 0.001, 2000)
 generadores = ("greedy",)
-i = 0
-for k in K:
-    for lam in LAM:
-        pass
-#Exp.experimento(algoritmo=1, schedule_params=(8.4, 0.2221, 1000), sa0 = problem_sa)
-#Exp.experimento(algoritmo=1, schedule_params=(5, 0.1, 1000), sa1 = problem_sa)
-#  cogemos este: --> Exp.experimento(algoritmo=1, schedule_params=(10, 0.5, 1000), sa2 = problem_sa)
+Exp.experimento(algoritmo=1, schedule_params=s, initial_states=[generadores, f"sa_1"], params = params)
+Exp.experimento(algoritmo=1, schedule_params=s2, initial_states=[generadores, f"sa_2"], params = params)
 
-Exp.experimento(algoritmo=1, schedule_params=(5, 0.001, 2000), initial_states=[generadores, f"sa_L-{0.001}--K-{5}"], params = params)
-        
+Exp.experimento(algoritmo=0, initial_states=[generadores, "hc"], params = params)
 
-#Exp.experimento(algoritmo=0, initial_states=[generadores, "hc"], params = params)
 
 #Exp.experimento(algoritmo=0, hc=problem_hc)
 "k_50--lam_0.0005"

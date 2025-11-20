@@ -1,23 +1,86 @@
 {
-  "greedy": {
-    "HC": {
-      "n": 40,
-      "beneficio_mean": 244016.0,
-      "beneficio_std": 110176.10194593018,
-      "beneficio_min": 95100.0,
-      "beneficio_max": 393620.0,
-      "beneficio_median": 242720.0,
-      "distancia_mean": 4187.45,
-      "distancia_std": 1130.6161685173356,
-      "distancia_min": 2220.0,
-      "distancia_max": 6084.0,
-      "distancia_median": 4310.0,
-      "time_sec_mean": 187.91310249999998,
-      "time_sec_std": 220.04129262393235,
-      "time_sec_min": 3.1478,
-      "time_sec_max": 703.529,
-      "time_sec_median": 87.84145000000001,
-      "pasos_mean": 689166
+  "multiplicador_1": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 93238.0,
+      "beneficio_std": 1472.2454505505075,
+      "beneficio_min": 90900.0,
+      "beneficio_max": 96040.0,
+      "beneficio_median": 93090.0,
+      "distancia_mean": 3526.2,
+      "distancia_std": 468.5328874974164,
+      "distancia_min": 2776.0,
+      "distancia_max": 4344.0,
+      "distancia_median": 3549.0,
+      "time_sec_mean": 1.9610300000000003,
+      "time_sec_std": 0.3173520584461364,
+      "time_sec_min": 1.758,
+      "time_sec_max": 2.8257,
+      "time_sec_median": 1.85985,
+      "pasos_mean": 438
+    }
+  },
+  "multiplicador_2": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 187312.0,
+      "beneficio_std": 1704.4829779796048,
+      "beneficio_min": 184540.0,
+      "beneficio_max": 189840.0,
+      "beneficio_median": 187380.0,
+      "distancia_mean": 5673.4,
+      "distancia_std": 735.3705339638121,
+      "distancia_min": 4216.0,
+      "distancia_max": 6690.0,
+      "distancia_median": 5617.0,
+      "time_sec_mean": 5.69121,
+      "time_sec_std": 0.7836657797386163,
+      "time_sec_min": 4.9467,
+      "time_sec_max": 7.3567,
+      "time_sec_median": 5.487299999999999,
+      "pasos_mean": 511
+    }
+  },
+  "multiplicador_3": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 277922.0,
+      "beneficio_std": 4321.753245051262,
+      "beneficio_min": 271720.0,
+      "beneficio_max": 284060.0,
+      "beneficio_median": 278320.0,
+      "distancia_mean": 7548.0,
+      "distancia_std": 763.253853212969,
+      "distancia_min": 6754.0,
+      "distancia_max": 8656.0,
+      "distancia_median": 7522.0,
+      "time_sec_mean": 14.27316,
+      "time_sec_std": 4.467716574418452,
+      "time_sec_min": 10.0344,
+      "time_sec_max": 23.1309,
+      "time_sec_median": 12.8286,
+      "pasos_mean": 587
+    }
+  },
+  "multiplicador_4": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 375402.0,
+      "beneficio_std": 4438.022081963992,
+      "beneficio_min": 370400.0,
+      "beneficio_max": 383600.0,
+      "beneficio_median": 374300.0,
+      "distancia_mean": 9289.8,
+      "distancia_std": 843.1135154888693,
+      "distancia_min": 7492.0,
+      "distancia_max": 10634.0,
+      "distancia_median": 9444.0,
+      "time_sec_mean": 19.900530000000003,
+      "time_sec_std": 3.323938853579189,
+      "time_sec_min": 16.4026,
+      "time_sec_max": 25.5498,
+      "time_sec_median": 18.19115,
+      "pasos_mean": 658
     }
   }
 }

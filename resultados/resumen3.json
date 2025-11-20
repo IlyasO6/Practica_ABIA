@@ -1,23 +1,65 @@
 {
-  "sa_L-0.001--K-5": {
+  "sa_1": {
     "SA": {
       "n": 10,
-      "beneficio_mean": 93112.0,
-      "beneficio_std": 2458.8380272894033,
-      "beneficio_min": 89860.0,
-      "beneficio_max": 97260.0,
-      "beneficio_median": 93540.0,
-      "distancia_mean": 3421.2,
-      "distancia_std": 596.9814439699483,
-      "distancia_min": 2448.0,
-      "distancia_max": 4344.0,
-      "distancia_median": 3294.0,
-      "time_sec_mean": 1.0113699999999999,
-      "time_sec_std": 0.333634484128964,
-      "time_sec_min": 0.6722,
-      "time_sec_max": 1.8416,
-      "time_sec_median": 1.0121,
-      "pasos_mean": 219
+      "beneficio_mean": 93200.0,
+      "beneficio_std": 1879.1487434474154,
+      "beneficio_min": 90840.0,
+      "beneficio_max": 96480.0,
+      "beneficio_median": 92980.0,
+      "distancia_mean": 3215.8,
+      "distancia_std": 433.1799215619815,
+      "distancia_min": 2188.0,
+      "distancia_max": 3596.0,
+      "distancia_median": 3330.0,
+      "time_sec_mean": 0.8804400000000001,
+      "time_sec_std": 0.1989780624424043,
+      "time_sec_min": 0.7243,
+      "time_sec_max": 1.2638,
+      "time_sec_median": 0.7735,
+      "pasos_mean": 224
+    }
+  },
+  "sa_2": {
+    "SA": {
+      "n": 10,
+      "beneficio_mean": 92244.0,
+      "beneficio_std": 2855.976968472338,
+      "beneficio_min": 86860.0,
+      "beneficio_max": 96540.0,
+      "beneficio_median": 92750.0,
+      "distancia_mean": 3268.2,
+      "distancia_std": 732.2764808762087,
+      "distancia_min": 1996.0,
+      "distancia_max": 4222.0,
+      "distancia_median": 3407.0,
+      "time_sec_mean": 1.1406999999999998,
+      "time_sec_std": 0.05467798663285091,
+      "time_sec_min": 1.0403,
+      "time_sec_max": 1.2272,
+      "time_sec_median": 1.14765,
+      "pasos_mean": 288
+    }
+  },
+  "hc": {
+    "HC": {
+      "n": 10,
+      "beneficio_mean": 96734.0,
+      "beneficio_std": 1538.1966353132127,
+      "beneficio_min": 94180.0,
+      "beneficio_max": 99120.0,
+      "beneficio_median": 97010.0,
+      "distancia_mean": 2756.2,
+      "distancia_std": 199.28862374846076,
+      "distancia_min": 2424.0,
+      "distancia_max": 2998.0,
+      "distancia_median": 2791.0,
+      "time_sec_mean": 10.89308,
+      "time_sec_std": 3.8531628750648186,
+      "time_sec_min": 5.3755,
+      "time_sec_max": 19.3795,
+      "time_sec_median": 10.508099999999999,
+      "pasos_mean": 31
     }
   }
 }
