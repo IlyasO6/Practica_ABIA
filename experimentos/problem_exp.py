@@ -51,7 +51,7 @@ class GasProblem(Problem):
         
         no_satisfechas = state.perdida_no_asignadas
         alpha = 1
-        beta = 3
+        beta = 1
         gamma = 0.5
 
         #h = beneficio

@@ -560,7 +560,7 @@ def generate_initial_state_random(params: ProblemParameters, seed: int | None = 
     StateRepresentation.preprocessament(gasolineras_coords, centros_coords, peticiones)
 
     # Inicializar rutas vacías
-    camiones: list[list[Tuple[int, int] | None]] = [[] for _ in centros_coords]
+    camiones = [[] for _ in centros_coords]
 
     # Pool de peticiones sin asignar
     pool = [(g, p) for g in range(len(peticiones)) for p in range(len(peticiones[g]))]

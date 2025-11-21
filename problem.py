@@ -5,24 +5,18 @@ from aima.search import Problem, simulated_annealing, hill_climbing
 from state import *
 from operators import GasOperators
 
-<<<<<<< HEAD
 class GasProblem(Problem):
-=======
-class GasProblem(Problem): #mahsdgsih = 
-    def __init__(self, initial_state:StateRepresentation, algoritmo:int=0):
->>>>>>> 7a14997095d907302bb9bede767f09f6a4d661b9
 
     def __init__(self, initial_state:StateRepresentation, algoritmo:int=0):
         """ Algoritmo: 0 --> hill climbing ; 1 --> simulated annealing """
-        if algoritmo == 0:
-            self.generate = initial_state.generate_actionsx
-        else:
-            self.generate = initial_state.generate_one_actionx
-
+        self.algoritmo = algoritmo
         super().__init__(initial_state)
 
     def actions(self, state:StateRepresentation):
-        return self.generate(state)
+        if self.algoritmo == 0:
+            return state.generate_actionsx()
+        else:
+            return state.generate_one_actionx()
     
     def result(self, state:StateRepresentation, action:Generator[GasOperators, 0, 0]):
         #  state no se refiere al nombre del archivo, es un argumento del tipo StateRepresentation
@@ -47,3 +41,16 @@ class GasProblem(Problem): #mahsdgsih =
     def goal_test(self):
         #  devolvemos False porque es busqueda local
         return False
+
+if __name__ == '__main__':
+    params = ProblemParameters(n_distribution_centers=10, 
+                            n_gas_stations=100, 
+                            multiplicitat=1)
+
+    initial_state = generate_initial_state_greedy(params=params)
+
+    problem = GasProblem(initial_state=initial_state, algoritmo=0)
+
+    node = hill_climbing(problem)
+
+    print(f"Beneficio: {node.beneficio}\nDistancia total: {node.distancia}\nBeneficio neto: {node.beneficio - node.distancia*2}")
